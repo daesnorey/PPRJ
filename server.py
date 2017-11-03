@@ -1,20 +1,22 @@
-#server.py
-#Author: DNR
+# server.py
+# Author: DNR
 
 from sys import path
 from bottle import route, run, template
-path.insert(0, 'src/controller')
-from action_controller import ActionController as ac
+path.insert(0, 'src/controllers')
+from elements_controller import ElementsController as ec
 
 
-@route("/models/<action>")
-def model_action(action):
+@route("/elements")
+@route("/elements/<action>")
+def elements(action="view"):
     """
-    Metodo ejecutado cuando se entra por models
+    Metodo que manejara el comportamiento de los elementos
     """
-    action_controller = ac(action)
-    action_controller.greeting()
-    return template('template_action', action=action)
+    element_controller = ec(action)
+    element_controller.evaluate()
+    return template("elements_template", name="lol")
+
 
 if __name__ == "__main__":
     run(host='localhost', port=1993, debug=True, reloader=True)
