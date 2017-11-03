@@ -1,8 +1,18 @@
 
-class ActionController:
+class ActionController(object):
+    """
+    Clase de muestra
+    """
 
     def __init__(self, action):
         self.action = action
 
     def greeting(self):
-        pass    
+        """
+        Metodo de saludo
+        """
+
+    def second(self):
+        """
+        Metodo de prueba
+        """
