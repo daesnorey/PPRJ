@@ -1,0 +1,67 @@
+"""
+db_connection.py file will contain the connection behaviour
+to the database
+"""
+
+import cx_Oracle
+
+
+class Oracle(object):
+    """
+    Oracle class will handle the conection to the database
+    """
+
+    def __init__(self):
+        self.__data_base = None
+        self.__cursor = None
+
+    def __open(self):
+        """ Connect to the database """
+
+        username = 'PPRJ'
+        password = 'PPRJ123'
+        hostname = '127.0.0.1'
+        servicename = 'XE'
+        port = 1521
+
+        dsn_tns = cx_Oracle.makedsn(hostname, port, servicename)
+        print dsn_tns
+        try:
+            self.__data_base = cx_Oracle.connect(username, password, dsn_tns)
+        except cx_Oracle.DatabaseError as e:
+            error, = e.args
+            if error.code == 1017:
+                print 'Please check your credentials.'
+                # sys.exit()?
+            else:
+                print e
+
+            # Very important part!
+            raise
+
+        # If the database connection succeeded create the cursor
+        # we-re going to use.
+        self.__cursor = self.__data_base.cursor()
+
+    def __close(self):
+        if self.__data_base is not None:
+            self.__data_base.close()
+            self.__data_base = None
+        self.__cursor = None
+
+    def get_cursor(self):
+        """ get cursor connection """
+        if self.__cursor is None:
+            self.__open()
+
+        return self.__cursor
+
+    def execute(self, query):
+        """ execute query
+            return cursor
+        """
+        response = self.get_cursor().execute(query)
+
+        self.__close()
+
+        return response
