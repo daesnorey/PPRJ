@@ -56,12 +56,13 @@ class Oracle(object):
 
         return self.__cursor
 
-    def execute(self, query):
+    def execute(self, query, bindvars=None, commit=False):
         """ execute query
             return cursor
         """
-        response = self.get_cursor().execute(query)
+        response = self.get_cursor().execute(query, bindvars)
 
-        self.__close()
+        if commit is True:
+            self.__data_base.commit()
 
         return response
