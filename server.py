@@ -15,7 +15,7 @@ def elements(action="view"):
     """
     element_controller = ec(action)
     element_controller.evaluate()
-    return template("elements_template", name="lol")
+    return template("elements_template", name="asi")
 
 
 if __name__ == "__main__":
