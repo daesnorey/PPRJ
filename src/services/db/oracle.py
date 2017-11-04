@@ -15,7 +15,7 @@ class Oracle(object):
         self.__data_base = None
         self.__cursor = None
 
-    def __open(self):
+    def __open(self, debug = False):
         """ Connect to the database """
 
         username = 'PPRJ'
@@ -25,7 +25,10 @@ class Oracle(object):
         port = 1521
 
         dsn_tns = cx_Oracle.makedsn(hostname, port, servicename)
-        print dsn_tns
+
+        if debug is True:
+            print dsn_tns
+
         try:
             self.__data_base = cx_Oracle.connect(username, password, dsn_tns)
         except cx_Oracle.DatabaseError as e:

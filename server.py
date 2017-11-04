@@ -26,4 +26,4 @@ def elements(action="view"):
 def components(action="view"):
     return "Hello World!" + action
 
-run(host='localhost', port=1017, debug=True, reloader=True)
+run(host='localhost', port=1993, debug=True, reloader=True)
