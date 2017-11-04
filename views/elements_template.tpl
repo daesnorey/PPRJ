@@ -1,15 +1,23 @@
 % include('head.tpl', title='Elementos')
 
-%if action == "view":
-<h2>{{action}}</h2>
-%else:
-<h2>otro</h2>
-%end
+<div class="row col-md-10 col-md-offset-1">
+    <ul class="row col-md-12">
+        %for element in elements:
+        <li class="row col-md-10" 
+            data-element="{{element.get_id(True)}}" 
+            {{!'data-parent="element.get_parent_id()"' if element.get_parent_id() > 0 else ''}}
+        >
+            <span class="row col-md-4">
+                {{element.get_name()}}
+            </span>
+            <span>
+                {{element.get_type_id()}}
+            </span>
+        </li>
+        %end
+    </ul>
+</div>
 
-<ul>
-    %for element in elements:
-    <li>{{element.get_name()}}</li>
-    %end
-</ul>
+% include('combo.tpl', value_name="id", text_name="name", items=elements)
 
 % include('foot.tpl')
