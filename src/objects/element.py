@@ -3,8 +3,9 @@ element.py
 This file has the structure definition of the element object
 """
 
+from object_extend import ObjectExt
 
-class Element(object):
+class Element(ObjectExt):
     """
     Element class has the attributes and methods to carrie the information
     """
@@ -27,12 +28,15 @@ class Element(object):
         """
         self.__id = element_id
 
-    def get_id(self):
+    def get_id(self, encrypt=False):
         """
         getter method for id
         returns a number value
         """
-        return self.__id
+        if encrypt is True:
+            return str(self.__id) + "ss"
+        else:
+            return self.__id
 
     def set_name(self, element_name):
         """

@@ -3,8 +3,10 @@ element_type.py
 This file has the structure definition of the element_type object
 """
 
+from object_extend import ObjectExt
 
-class ElementType(object):
+
+class ElementType(ObjectExt):
     """
     ElementType class has the attributes and methods to carrie the information
     """
