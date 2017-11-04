@@ -19,11 +19,12 @@ def elements(action="view"):
     """
     element_controller = ec(action)
     element_controller.evaluate()
-    return dict({"action": action, "elements": element_controller.elements})
+
+    return dict({"action": action, "data_e": element_controller.data})
 
 @route("/components")
 @route("/components/<action>")
 def components(action="view"):
     return "Hello World!" + action
 
-run(host='localhost', port=1993, debug=True, reloader=True)
+run(host='localhost', port=1010, debug=True, reloader=True)
