@@ -1,24 +1,29 @@
-# server.py
-# Author: DNR
+"""
+File server.py
+Server web appliation, will take the requests and route them to their controllers
+"""
 
+from bottle import route, run, view
 from sys import path
-from bottle import route, run, template
+
 path.insert(0, 'src/controllers')
 from elements_controller import ElementsController as ec
 
 
 @route("/elements")
 @route("/elements/<action>")
+@view("elements_template")
 def elements(action="view"):
     """
     Metodo que manejara el comportamiento de los elementos
     """
     element_controller = ec(action)
     element_controller.evaluate()
-    return template("elements_template", name="lol")
+    return dict({"action": action, "elements": element_controller.elements})
 
+@route("/components")
+@route("/components/<action>")
+def components(action="view"):
+    return "Hello World!" + action
 
-if __name__ == "__main__":
-    run(host='localhost', port=1993, debug=True, reloader=True)
-else:
-    run(host='localhost', port=1993, debug=True)
+run(host='localhost', port=1017, debug=True, reloader=True)
