@@ -1,18 +1,24 @@
 <%
-try:
-    value_combo = value
-except NameError:
-    value_combo = -1
-try:
-    bootstrap_cols = cols
-except NameError:
-    bootstrap_cols = "12"
+setdefault('value', -1)
+setdefault('cols', str(12))
+setdefault('disabled', False)
+
+value_combo = value
+bootstrap_cols = cols
+is_disabled = disabled
 %>
-<select value="{{value_combo}}" id="{{id_combo}}" name"{{id_combo}}" 
-    class="form-control col-md-{{bootstrap_cols}}">
-    <option value="-1">Select item</option>
+<select
+    id="{{id_combo}}" 
+    name="{{id_combo}}" 
+    class="form-control col-md-{{bootstrap_cols}}"
+    {{!'disabled="disabled"' if is_disabled else ''}}
+>
+    <option value="-1"></option>
     %for item in items:
-    <option value="{{item.get(value_name)}}">
+    <option 
+        value="{{item.get(value_name)}}"
+        {{!'selected="selected"' if item.get(value_name) == value_combo else ''}}
+    >
         {{item.get(text_name)}}
     </option>
     %end
