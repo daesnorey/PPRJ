@@ -3,7 +3,7 @@ File server.py
 Server web appliation, will take the requests and route them to their controllers
 """
 
-from bottle import route, run, view
+from bottle import route, run, view, request
 from sys import path
 
 path.insert(0, 'src/controllers')
@@ -13,20 +13,28 @@ from models_controller import ModelsController as mc
 
 @route("/elements")
 @route("/elements/<action>")
+@route("/elements/<action>/<id_element>")
 @view("elements_template")
-def elements(action="view"):
+def elements(action="view", id_element=None):
     """
     Metodo que manejara el comportamiento de los elementos
     """
     element_controller = ec(action)
-    element_controller.evaluate()
+    element_controller.evaluate(id_element)
 
-    return dict({"action": action, "data_e": element_controller.data})
+    return dict({"action": action, "data_e": element_controller.data, "cols": 6})
 
-@route("/components")
-@route("/components/<action>")
-def components(action="view"):
-    return "Hello World!" + action
+
+@route("/elements/<action>/<id_element>", method='POST')
+def elements_action(action, id_element):
+    """
+    Metodo que manejara el comportamiento de los elementos
+    """
+    print "elements_action", id_element
+    element_controller = ec(action)
+    element_controller.evaluate(id_element, request)
+
+    return element_controller.response
 
 @route("/models")
 @route("/models/<action>")
