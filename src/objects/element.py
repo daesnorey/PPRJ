@@ -15,8 +15,10 @@ class Element(ObjectExt):
         Constructor
         intialize every attribute
         """
+        super(Element, self).__init__()
+
         self.__id = -1
-        self.__name = None
+        self.__name = ""
         self.__parent_id = 0
         self.__type_id = 0
         self.__active = False
@@ -34,7 +36,7 @@ class Element(ObjectExt):
         returns a number value
         """
         if encrypt is True:
-            return str(self.__id) + "ss"
+            return self.encrypt("id")
         else:
             return self.__id
 
@@ -114,6 +116,8 @@ class ElementType(ObjectExt):
         Constructor
         intialize every attribute
         """
+        super(ElementType, self).__init__()
+
         self.__id = -1
         self.__name = None
         self.__tag = None
@@ -196,6 +200,8 @@ class DataType(ObjectExt):
         Constructor
         intialize every attribute
         """
+        super(DataType, self).__init__()
+
         self.__id = -1
         self.__name = None
         self.__table = None

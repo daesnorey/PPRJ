@@ -19,12 +19,17 @@ class ElementsService(object):
         """
         get elements in data base with filters
         """
-        if filters is None:
+        __query = "SELECT * FROM ELEMENTS"
+
+        if not filters:
             filters = {}
         else:
-            pass
+            __query += " WHERE "
+            for key in filters:
+                __query += key + " = :" + key
 
-        __query = "SELECT * FROM ELEMENTS"
+        print __query
+
         response = self.__db.execute(__query, filters, True).fetchall()
         return response
 
@@ -52,4 +57,61 @@ class ElementsService(object):
 
         __query = "SELECT * FROM DATA_TYPES"
         response = self.__db.execute(__query, filters, True).fetchall()
+        return response
+
+    def save_element(self, element):
+        """
+        save_element
+        """
+        __update_query = """UPDATE ELEMENTS
+                            SET ELEMENT_NAME = :ELEMENT_NAME,
+                                PARENT_ELEMENT_ID = :PARENT_ELEMENT_ID,
+                                ELEMENT_TYPE_ID = :ELEMENT_TYPE_ID,
+                                IS_ACTIVE = :IS_ACTIVE,
+                                IS_CONTAINER = :IS_CONTAINER
+                            WHERE ELEMENT_ID = :ELEMENT_ID
+        """
+
+        __insert_query = """INSERT INTO
+                            ELEMENTS(ELEMENT_NAME, PARENT_ELEMENT_ID, ELEMENT_TYPE_ID, IS_ACTIVE, IS_CONTAINER) 
+                            VALUES (:ELEMENT_NAME, :PARENT_ELEMENT_ID, :ELEMENT_TYPE_ID, :IS_ACTIVE, :IS_CONTAINER)
+        """
+
+        response = None
+
+        try:
+            if element["ELEMENT_ID"] > 0:
+                print "Update", __update_query
+                self.__db.execute(__update_query, element, True)
+            else:
+                print "Insert"
+                del element["ELEMENT_ID"]
+                self.__db.execute(__insert_query, element, True)
+            response = dict(error=0, text="success")
+        except Exception as e:
+            print e
+            response = dict(error=0001, text="There was an error saving")
+
+        return response
+
+
+    def delete_element(self, id_element):
+        """
+        delete an element with a given id if id_element is None then I will return an error
+        """
+        if not id_element:
+            return dict(error=0002, text="There was an error deleting")
+
+        __delete_query = """DELETE FROM ELEMENTS
+                            WHERE ELEMENT_ID = :ELEMENT_ID
+                         """
+
+        response = {}
+
+        try:
+            self.__db.execute(__delete_query, dict(ELEMENT_ID=id_element), True)
+            response = dict(error=0, text="success")
+        except Exception:
+            response = dict(error=0002, text="There was an error deleting")
+
         return response
