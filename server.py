@@ -22,7 +22,7 @@ def elements(action="view", id_element=None):
     element_controller = ec(action)
     element_controller.evaluate(id_element)
 
-    return dict({"action": action, "data_e": element_controller.data, "cols": 6})
+    return dict(action=action, data_e=element_controller.data,cols=6)
 
 
 @route("/elements/<action>/<id_element>", method='POST')
