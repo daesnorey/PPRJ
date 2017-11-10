@@ -15,6 +15,7 @@ class Model(ObjectExt):
         Constructor
         intialize every attribute
         """
+        super(Model, self).__init__()
         self.__id = -1
         self.__name = None
         self.__active = False
