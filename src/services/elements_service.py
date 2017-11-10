@@ -4,9 +4,7 @@ file
 """
 
 import re
-import sys
-sys.path.insert(0, "src/services/db")
-from oracle import Oracle
+from src.services.db.oracle import Oracle
 
 class ElementsService(object):
     """
