@@ -3,6 +3,7 @@ elements_service.py
 file
 """
 
+import re
 import sys
 sys.path.insert(0, "src/services/db")
 from oracle import Oracle
@@ -48,6 +49,7 @@ class ElementsService(object):
                             WHERE ELEMENT_ID = :ELEMENT_ID
         """
 
+
         __insert_query = """INSERT INTO
                             ELEMENTS(ELEMENT_NAME, PARENT_ELEMENT_ID, ELEMENT_TYPE_ID, IS_ACTIVE, IS_CONTAINER) 
                             VALUES (:ELEMENT_NAME, :PARENT_ELEMENT_ID, :ELEMENT_TYPE_ID, :IS_ACTIVE, :IS_CONTAINER)
@@ -70,6 +72,32 @@ class ElementsService(object):
 
         return response
 
+    def get_update_query(self, table, fields, conditions):
+        """
+        get_update_query
+        """
+
+        __query = "UPDATE :table SET :instructions WHERE :conditions"
+
+        __inst = ""
+        __cond = ""
+
+        for field in fields:
+            if __inst:
+                __inst += ","
+            __inst += field + "=:" + field
+
+        for condition in conditions:
+            if __cond:
+                __cond += " AND "
+            __cond += condition + "=:" + condition
+
+        dic = dict(table=table, instructions=__inst, conditions=__cond)
+
+        pattern = re.compile(r'\b(' + '|:'.join(dic.keys()) + r')\b')
+        result = pattern.sub(lambda x: dic[x.group()], __query)
+
+        return result
 
     def delete_element(self, id_element):
         """
