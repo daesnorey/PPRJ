@@ -71,13 +71,13 @@ def data_types(action="view", id_type=None):
 
 
 @route("/data_types/<action>/<id_type>", method='POST')
-def data_types_action(action, id_element):
+def data_types_action(action, id_type):
     """
     Metodo que manejara el comportamiento de los elementos
     """
-    print "elements_action", id_element
+    print "elements_action", id_type
     element_controller = ec(action)
-    element_controller.evaluate_data_types(id_element, request)
+    element_controller.evaluate_data_types(id_type, request)
 
     return element_controller.response
 
@@ -90,6 +90,13 @@ def models(action="view"):
     model_controller = mc(action)
     model_controller.evaluate()
 
+@route("/")
+@view("index_template")
+def index():
+    """
+    initial page, it contains links to go in a fast way to other pages.
+    """
+    return dict()
 
 @route('/js/<file_name:path>')
 def js_loader(file_name):
@@ -107,4 +114,4 @@ def css_loader(file_name):
     """
     return static_file(file_name, root='./styles')
 
-run(host='localhost', port=1996, debug=True, reloader=True)
+run(host='localhost', port=1994, debug=True, reloader=True)
