@@ -2,7 +2,7 @@
 db_connection.py file will contain the connection behaviour
 to the database
 """
-
+import re
 import cx_Oracle
 
 
@@ -69,3 +69,31 @@ class Oracle(object):
             self.__data_base.commit()
 
         return response
+
+    def get_update_query(self, table, fields, conditions):
+        """
+        get_update_query
+        """
+
+        __query = "UPDATE :table SET :instructions WHERE :conditions"
+
+        __inst = ""
+        __cond = ""
+
+        for field in fields:
+            if __inst:
+                __inst += ","
+            __inst += field + "=:" + field
+
+        for condition in conditions:
+            if __cond:
+                __cond += " AND "
+            __cond += condition + "=:" + condition
+
+        dic = dict(table=table, instructions=__inst, conditions=__cond)
+
+        pattern = re.compile(r'\b(' + '|:'.join(dic.keys()) + r')\b')
+        result = pattern.SUB(lambda x: dic[x.group()], __query)
+
+        return result
+    

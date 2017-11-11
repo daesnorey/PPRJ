@@ -3,7 +3,6 @@ elements_service.py
 file
 """
 
-import re
 from src.services.db.oracle import Oracle
 
 class ElementsService(object):
@@ -69,33 +68,6 @@ class ElementsService(object):
             response = dict(error=0001, text="There was an error saving")
 
         return response
-
-    def get_update_query(self, table, fields, conditions):
-        """
-        get_update_query
-        """
-
-        __query = "UPDATE :table SET :instructions WHERE :conditions"
-
-        __inst = ""
-        __cond = ""
-
-        for field in fields:
-            if __inst:
-                __inst += ","
-            __inst += field + "=:" + field
-
-        for condition in conditions:
-            if __cond:
-                __cond += " AND "
-            __cond += condition + "=:" + condition
-
-        dic = dict(table=table, instructions=__inst, conditions=__cond)
-
-        pattern = re.compile(r'\b(' + '|:'.join(dic.keys()) + r')\b')
-        result = pattern.sub(lambda x: dic[x.group()], __query)
-
-        return result
 
     def delete_element(self, id_element):
         """
