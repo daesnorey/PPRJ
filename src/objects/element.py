@@ -3,11 +3,16 @@ element.py
 This file has the structure definition of the element object
 """
 
-from object_extend import ObjectExt
+from src.objects.object_extend import ObjectExt
 
 class Element(ObjectExt):
     """
     Element class has the attributes and methods to carrie the information
+    @attribute id
+    @attribute name
+    @attribute parent_id
+    @attribute active
+    @attribute container
     """
 
     def __init__(self):
@@ -109,6 +114,11 @@ class Element(ObjectExt):
 class ElementType(ObjectExt):
     """
     ElementType class has the attributes and methods to carrie the information
+    @attribute id
+    @attribute name
+    @attribute tag
+    @attribute data_type_id
+    @attribute parent
     """
 
     def __init__(self):
@@ -119,8 +129,8 @@ class ElementType(ObjectExt):
         super(ElementType, self).__init__()
 
         self.__id = -1
-        self.__name = None
-        self.__tag = None
+        self.__name = ""
+        self.__tag = ""
         self.__data_type_id = 0
         self.__parent = False
 
@@ -130,12 +140,15 @@ class ElementType(ObjectExt):
         """
         self.__id = element_type_id
 
-    def get_id(self):
+    def get_id(self, encrypt=False):
         """
         getter method for id
         returns a number value
         """
-        return self.__id
+        if encrypt is True:
+            return self.encrypt("id")
+        else:
+            return self.__id
 
     def set_name(self, name):
         """
@@ -193,6 +206,9 @@ class ElementType(ObjectExt):
 class DataType(ObjectExt):
     """
     DataType class has the attributes and methods to carrie the information
+    @attribute id
+    @attribute name
+    @attribute table
     """
 
     def __init__(self):
@@ -203,8 +219,8 @@ class DataType(ObjectExt):
         super(DataType, self).__init__()
 
         self.__id = -1
-        self.__name = None
-        self.__table = None
+        self.__name = ""
+        self.__table = ""
 
     def set_id(self, element_type_id):
         """
@@ -212,12 +228,15 @@ class DataType(ObjectExt):
         """
         self.__id = element_type_id
 
-    def get_id(self):
+    def get_id(self, encrypt=False):
         """
         getter method for id
         returns a number value
         """
-        return self.__id
+        if encrypt is True:
+            return self.encrypt("id")
+        else:
+            return self.__id
 
     def set_name(self, name):
         """
