@@ -24,11 +24,11 @@ combo_tablas = [{"id":"NUMBER","name":"Número"}, {"id":"TEXT","name":"Texto"}]
                     {{data_type.get_name()}}
                 </td>
                 <td>
-                    % include('combo.tpl', value_name="id", text_name="name", items=combo_tablas, id_combo="table", value=data_type.get_table(), disabled=False, cols=12)
+                    % include('combo.tpl', value_name="id", text_name="name", items=combo_tablas, id_combo="table", value=data_type.get_table(), disabled=True, cols=12)
                 </td>
                 <td>
                     <a href="/data_types/edit/{{data_type.get_id(True)}}" class="btn btn-primary">Editar</a>
-                    <a href="javascript:void(0)" data-link="/data_types/delete/{{data_type.get_id(True)}}" class="btn btn-danger" onclick="send(this)">Eliminar</a>
+                    <a href="javascript:void(0)" data-link="/data_types/delete/{{data_type.get_id(True)}}" data-btn="delete_element" class="btn btn-danger">Eliminar</a>
                 </td>
             </tr>
             %end
@@ -46,16 +46,8 @@ combo_tablas = [{"id":"NUMBER","name":"Número"}, {"id":"TEXT","name":"Texto"}]
             </div>
             <div class="content-form col-md">
                 <label for="name">Tipo</label>
-                % include('combo.tpl', value_name="id", text_name="name", items=combo_tablas, id_combo="type_id", value=element.get_type_id())
+                % include('combo.tpl', value_name="id", text_name="name", items=combo_tablas, id_combo="table", value=data_type.get_table())
             </div>
-        </div>
-        <div class="form-check">
-            <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" 
-                    id="is_container" name="is_container" value="it_is"
-                    {{!'checked="checked"' if element.is_container() else ''}} />
-                Contenedor
-            </label>
         </div>
         <div class="form-group">
             <input class="col-md-auto btn btn-success" type="submit" value="Guardar" />
