@@ -31,7 +31,8 @@ class ElementsController(ObjectExt):
         set_data docstring
         """
         self.data = {"elements": self.elements, "element_types": self.element_types,
-                     "data_types": self.data_types, "element": self.element, "data_type": self.data_type,
+                     "data_types": self.data_types, "element": self.element, 
+                     "data_type": self.data_type,
                      "element_type":self.element_type}
 
     def evaluate_elements(self, id_element=None, req=None):
@@ -70,6 +71,8 @@ class ElementsController(ObjectExt):
             self.get_element_types(id_element_type)
         elif action == 'delete':
             self.delete_element_type(id_element_type)
+        else:
+            self.get_element_types()
 
         self.get_data_types()
         self.set_data()
@@ -89,6 +92,8 @@ class ElementsController(ObjectExt):
             self.get_data_types(id_data_type)
         elif action == 'delete':
             self.delete_data_type(id_data_type)
+        else:
+            self.get_data_types()
 
         self.set_data()
 
@@ -180,7 +185,7 @@ class ElementsController(ObjectExt):
         """
         e_filter = {}
         if id_type is not None:
-            e_filter["ELEMENT_TYPE_ID"] = id_type
+            e_filter["ELEMENT_TYPE_ID"] = self.decrypt(id_type)
             __element_type = self.__es.get_element_types(e_filter)
             self.element_type = self.get_element_type_from_row(
                 __element_type[0])
@@ -212,8 +217,8 @@ class ElementsController(ObjectExt):
 
         __element = {}
 
-        __element["ELEMENT_ID"] = __id
-        __element["ELEMENT_NAME"] = __name
+        __element["ELEMENT_TYPE_ID"] = __id
+        __element["ELEMENT_TYPE_NAME"] = __name
         __element["ELEMENT_TAG"] = __tag
         __element["DATA_TYPE_ID"] = __data_type_id
         __element["IS_PARENT"] = __is_parent
@@ -272,7 +277,7 @@ class ElementsController(ObjectExt):
 
         __data_type["DATA_TYPE_ID"] = __id
         __data_type["DATA_TYPE_NAME"] = __name
-        __data_type["TABLE"] = __table
+        __data_type["TABLE_ELEMENT"] = __table
 
         __response = self.__es.save_data_type(__data_type)
         self.response = __response
