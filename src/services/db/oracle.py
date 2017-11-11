@@ -15,7 +15,7 @@ class Oracle(object):
         self.__data_base = None
         self.__cursor = None
 
-    def __open(self, debug = False):
+    def __open(self, debug=False):
         """ Connect to the database """
 
         username = 'PPRJ'
