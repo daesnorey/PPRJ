@@ -1,0 +1,78 @@
+------------------------------------------------------------------------------------------------------------------
+DATA_TYPES--------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+CREATE TABLE  "DATA_TYPES" 
+   (	"DATA_TYPE_ID" NUMBER(3,0), 
+	"DATA_TYPE_NAME" VARCHAR2(70), 
+	"TABLE_ELEMENT" VARCHAR2(15), 
+	 CONSTRAINT "DATA_TYPES_PK" PRIMARY KEY ("DATA_TYPE_ID") ENABLE
+   ) ;
+
+CREATE OR REPLACE TRIGGER  "BI_DATA_TYPES" 
+  before insert on "DATA_TYPES"               
+  for each row  
+begin   
+  if :NEW."DATA_TYPE_ID" is null then 
+    select "DATA_TYPES_SEQ".nextval into :NEW."DATA_TYPE_ID" from dual; 
+  end if; 
+end; 
+
+/
+ALTER TRIGGER  "BI_DATA_TYPES" ENABLE;
+
+------------------------------------------------------------------------------------------------------------------
+ELEMENT_TYPES-----------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+CREATE TABLE  "ELEMENT_TYPES" 
+   (	"ELEMENT_TYPE_ID" NUMBER(5,0), 
+	"ELEMENT_TYPE_NAME" VARCHAR2(70), 
+	"ELEMENT_TAG" CHAR(10), 
+	"DATA_TYPE_ID" NUMBER(3,0), 
+	"IS_PARENT" NUMBER(1,0), 
+	 CONSTRAINT "ELEMENT_TYPES_PK" PRIMARY KEY ("ELEMENT_TYPE_ID") ENABLE, 
+	 CONSTRAINT "DATA_TYPES_CK1" CHECK (IS_PARENT IN (0,1)) ENABLE
+   ) ;ALTER TABLE  "ELEMENT_TYPES" ADD CONSTRAINT "ELEMENT_TYPES_FK" FOREIGN KEY ("DATA_TYPE_ID")
+	  REFERENCES  "DATA_TYPES" ("DATA_TYPE_ID") ENABLE;
+
+CREATE OR REPLACE TRIGGER  "BI_ELEMENT_TYPES" 
+  before insert on "ELEMENT_TYPES"               
+  for each row  
+begin   
+  if :NEW."ELEMENT_TYPE_ID" is null then 
+    select "ELEMENT_TYPES_SEQ".nextval into :NEW."ELEMENT_TYPE_ID" from dual; 
+  end if; 
+end; 
+
+/
+ALTER TRIGGER  "BI_ELEMENT_TYPES" ENABLE;
+
+------------------------------------------------------------------------------------------------------------------
+ELEMENTS----------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE  "ELEMENTS" 
+   (	"ELEMENT_ID" NUMBER(5,0), 
+	"ELEMENT_NAME" VARCHAR2(70), 
+	"PARENT_ELEMENT_ID" NUMBER(5,0), 
+	"ELEMENT_TYPE_ID" NUMBER(5,0), 
+	"IS_ACTIVE" NUMBER(1,0), 
+	"IS_CONTAINER" NUMBER(1,0), 
+	 CONSTRAINT "ELEMENTS_PK" PRIMARY KEY ("ELEMENT_ID") ENABLE, 
+	 CONSTRAINT "ELEMENTS_CK1" CHECK (IS_ACTIVE IN (0,1)) ENABLE, 
+	 CONSTRAINT "ELEMENTS_CK2" CHECK (IS_CONTAINER IN (0,1)) ENABLE
+   ) ;ALTER TABLE  "ELEMENTS" ADD CONSTRAINT "ELEMENTS_CON" FOREIGN KEY ("PARENT_ELEMENT_ID")
+	  REFERENCES  "ELEMENTS" ("ELEMENT_ID") ON DELETE CASCADE ENABLE;ALTER TABLE  "ELEMENTS" ADD CONSTRAINT "ELEMENTS_FK" FOREIGN KEY ("ELEMENT_TYPE_ID")
+	  REFERENCES  "ELEMENT_TYPES" ("ELEMENT_TYPE_ID") ENABLE;
+
+CREATE OR REPLACE TRIGGER  "BI_ELEMENTS" 
+  before insert on "ELEMENTS"               
+  for each row  
+begin   
+  if :NEW."ELEMENT_ID" is null then 
+    select "ELEMENTS_SEQ".nextval into :NEW."ELEMENT_ID" from dual; 
+  end if; 
+end; 
+
+/
+ALTER TRIGGER  "BI_ELEMENTS" ENABLE;
+
