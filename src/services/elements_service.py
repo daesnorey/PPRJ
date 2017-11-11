@@ -153,13 +153,15 @@ class ElementsService(object):
 
         response = None
 
+        print element_type
+
         try:
             if element_type["ELEMENT_TYPE_ID"] > 0:
                 print "Update", __update_query
                 self.__db.execute(__update_query, element_type, True)
             else:
-                print "Insert"
                 del element_type["ELEMENT_TYPE_ID"]
+                print "Insert", element_type
                 self.__db.execute(__insert_query, element_type, True)
             response = dict(error=0, text="success")
         except Exception as e:
@@ -213,13 +215,13 @@ class ElementsService(object):
         """
         __update_query = """UPDATE DATA_TYPES
                             SET DATA_TYPE_NAME = :DATA_TYPE_NAME,
-                                TABLE = :TABLE
+                                TABLE_ELEMENT = :TABLE_ELEMENT
                             WHERE DATA_TYPE_ID = :DATA_TYPE_ID
         """
 
         __insert_query = """INSERT INTO
-                            DATA_TYPES(DATA_TYPE_NAME, TABLE) 
-                            VALUES (:DATA_TYPE_NAME, :TABLE)
+                            DATA_TYPES(DATA_TYPE_NAME, TABLE_ELEMENT) 
+                            VALUES (:DATA_TYPE_NAME, :TABLE_ELEMENT)
         """
 
         response = None
@@ -229,7 +231,7 @@ class ElementsService(object):
                 print "Update", __update_query
                 self.__db.execute(__update_query, data_type, True)
             else:
-                print "Insert"
+                print "Insert", __insert_query
                 del data_type["DATA_TYPE_ID"]
                 self.__db.execute(__insert_query, data_type, True)
             response = dict(error=0, text="success")
