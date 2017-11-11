@@ -3,7 +3,7 @@
     $( document ).ready( init );
 
     function init() {
-
+        setSendEvent()
     }
 
     function setSendEvent() {
