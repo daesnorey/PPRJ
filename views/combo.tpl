@@ -13,7 +13,7 @@ is_disabled = disabled
     class="form-control col-md-{{bootstrap_cols}}"
     {{!'disabled="disabled"' if is_disabled else ''}}
 >
-    <option value="-1"></option>
+    <option value=""></option>
     %for item in items:
     <option 
         value="{{item.get(value_name)}}"
