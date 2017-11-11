@@ -10,7 +10,7 @@ class ObjectExt(object):
     """
 
     def __init__(self):
-        pass
+        self.__secret_key = '1234567890123456'
 
     def get(self, item):
         """
@@ -24,12 +24,13 @@ class ObjectExt(object):
         """
         encrypt
         """
-        string = self.get(item)
-        key = "encrypt1231dasd52"
-        encoded_chars = []
-        for i in xrange(len(string)):
-            key_c = key[i % len(key)]
-            encoded_c = chr(ord(string[i]) + ord(key_c) % 256)
-            encoded_chars.append(encoded_c)
-        encoded_string = "".join(encoded_chars)
-        return base64.urlsafe_b64encode(encoded_string)
+        string = str(self.get(item))
+        encoded = base64.b64encode(string)
+        return encoded
+
+    def decrypt(self, encoded):
+        """
+        decrypt
+        """
+        decoded = base64.b64decode(encoded)
+        return decoded
