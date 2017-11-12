@@ -20,6 +20,18 @@ def elements(action="view", id_element=None):
 
     return dict(action=action, data_e=element_controller.data, cols=6)
 
+@route("/elements/<action>/<id_element>/childs")
+@view("elements_template")
+def element_childs(action, id_element):
+    """
+    element_childs method will handle every behaviour with the childrens
+    of a specific element
+    """
+    element_controller = ec(action)
+    element_controller.evaluate_elements(id_element, is_parent=True)
+
+    return "Hello world" + id_element
+
 @route("/elements/<action>/<id_element>", method='POST')
 def elements_action(action, id_element):
     """
