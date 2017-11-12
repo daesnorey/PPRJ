@@ -31,11 +31,11 @@ class ElementsController(ObjectExt):
         set_data docstring
         """
         self.data = {"elements": self.elements, "element_types": self.element_types,
-                     "data_types": self.data_types, "element": self.element, 
+                     "data_types": self.data_types, "element": self.element,
                      "data_type": self.data_type,
                      "element_type":self.element_type}
 
-    def evaluate_elements(self, id_element=None, req=None):
+    def evaluate_elements(self, id_element=None, req=None, is_parent=False):
         """
         Metodo que evalua la accion a realizar y ejecuta los metodos pertinentes
         """
@@ -51,7 +51,7 @@ class ElementsController(ObjectExt):
         elif action == 'delete':
             self.delete_element(id_element)
         else:
-            self.get_elements()
+            self.get_elements(parent=is_parent)
 
         self.get_element_types()
         self.set_data()
@@ -110,17 +110,20 @@ class ElementsController(ObjectExt):
         c_element.set_container(row[5] == 1)
         return c_element
 
-    def get_elements(self, id_element=None):
+    def get_elements(self, id_element=None, parent=False):
         """
         get elements in db
         if id_element is not None, then it will filter by id
         """
         e_filter = {}
-        if id_element is not None:
+        if id_element is not None and parent is False:
             e_filter["ELEMENT_ID"] = self.decrypt(id_element)
             __elements = self.__es.get_elements(e_filter)
             self.element = self.get_element_from_row(__elements[0])
         else:
+            if parent is True:
+                e_filter["PARENT_ELEMENT_ID"] = self.decrypt(id_element)
+
             __elements = self.__es.get_elements(e_filter)
             elements = []
 
