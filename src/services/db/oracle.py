@@ -70,70 +70,74 @@ class Oracle(object):
 
         return response
 
-    def get_query(self, table, fields=[], conditions=[], action=1):
-	"""get_query.
-	   @param table: table name in database
-           @param fields: dictionary which contain the fields to affect.
-           @param condition: dictionary which contain the fields and values to filter
-           @param action: 0=INSERT, 1=SELECT, 2=UPDATE, 3=DELETE
+    def get_query(self, table, fields=[], conditions={}, action=1):
+        """get_query.
+            @param table: table name in database
+            @param fields: dictionary which contain the fields to affect.
+            @param condition: dictionary which contain the fields and values to filter
+            @param action: 0=INSERT, 1=SELECT, 2=UPDATE, 3=DELETE
         """
 
         __inst  = self.get_instruction(action, fields)
-	__inst += self.get_conditions(action, fields)
+        __inst += self.get_conditions(action, conditions)
 
-	print __inst
+        query = __inst.replace(":table", table)
 
+        return query
 
     def get_instruction(self, action, fields):
-	"""get_instruction
-	   This method will evaluate the action and will return the right instruction
-	"""
+        """get_instruction
+	       This method will evaluate the action and will return the right instruction
+        """
 
         __ini = ""
 
         if action == 0:
-                __ini = "INSERT INTO :table (:fields) VALUES (:fields)"
+                __ini = "INSERT INTO :table (:fields) VALUES (:values)"
         elif action == 1:
                 __ini = "SELECT :fields FROM :table"
         elif action == 2:
                 __ini = "UPDATE :table SET :fields"
-	elif action == 3:
-                __ini = "DELETE FROM :table"
-                return __ini
+        elif action == 3:
+            __ini = "DELETE FROM :table"
+            return __ini
 
         __inst = ""
+        __values = ""
         for field in fields:
             if __inst:
                 __inst += ","
+                __values += ","
 
             if action == 2:
                 __inst += field + "=:" + field
             else:
                 __inst += field
+                __values += ":" + field
 
-        print __inst
+        response = __ini.replace(":fields", __inst).replace(":values", __values)
+        return response
 
     def get_conditions(self, action, conditions):
-	"""get_conditions
-	   this method will evaluate the action and the conditions
-	   if the action is 0 or there are no conditions then it returns an empty string
-	   otherwise it return the right condition
-	"""
+        """get_conditions
+	       this method will evaluate the action and the conditions
+           if the action is 0 or there are no conditions then it returns an empty string
+           otherwise it return the right condition
+        """
 
-	if action == 0 or len(conditions) == 0:
-		return ""
+        if action == 0 or len(conditions) == 0:
+            return ""
 
-	__condition = " WHERE "
-	__cond = ""
+        __condition = " WHERE "
+        __cond = ""
 
-	for condition in conditions:
+        for condition in conditions:
             if __cond:
                 __cond += " AND "
             __cond += condition + "=:" + condition
 
-	__condition += __cond
-
-	return __condition
+        __condition += __cond
+        return __condition
 
     def get_update_query(self, table, fields, conditions):
         """
@@ -161,4 +165,3 @@ class Oracle(object):
         result = pattern.SUB(lambda x: dic[x.group()], __query)
 
         return result
-    
