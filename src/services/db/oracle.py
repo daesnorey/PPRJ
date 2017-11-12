@@ -115,6 +115,9 @@ class Oracle(object):
                 __inst += field
                 __values += ":" + field
 
+        if not fields and action == 1:
+            __inst = "*"
+
         response = __ini.replace(":fields", __inst).replace(":values", __values)
         return response
 
@@ -139,29 +142,59 @@ class Oracle(object):
         __condition += __cond
         return __condition
 
-    def get_update_query(self, table, fields, conditions):
+    def save(self, table, generic_object, name_id):
         """
-        get_update_query
+        save
+        @attribute table
+        @attribute generic_object
+        @attribute name_id
+        """
+        __fields = generic_object
+        del __fields[name_id]
+
+        id_object = generic_object[name_id]
+        response = {}
+
+        try:
+            if id_object > 0:
+                print "Update"
+                __condition = {name_id:id_object}
+                __update_query = self.__db.get_query(table, fields=__fields, conditions=__condition, action=2)
+                print __update_query
+                self.__db.execute(__update_query, element, True)
+            else:
+                print "Insert"
+                __insert_query = self.__db.get_query(table, fields=__fields, action=0)
+                print __insert_query
+                self.__db.execute(__insert_query, __fields, True)
+            response = dict(error=0, text="success")
+        except Exception as e:
+            print e
+            response = dict(error=0001, text="There was an error saving")
+
+        return response
+
+    def delete(self, table, name_id, id_object):
+        """
+        delete
+        @attribute table
+        @attribute name_id
+        @attribute id_object
         """
 
-        __query = "UPDATE :table SET :instructions WHERE :conditions"
+        if not id_object:
+            return dict(error=0002, text="Data incomplete at delete")
 
-        __inst = ""
-        __cond = ""
+        __conditions = {name_id:id_object}
 
-        for field in fields:
-            if __inst:
-                __inst += ","
-            __inst += field + "=:" + field
+        __delete_query = self.__db.get_query(table, conditions=__conditions, action=3)
 
-        for condition in conditions:
-            if __cond:
-                __cond += " AND "
-            __cond += condition + "=:" + condition
+        response = {}
 
-        dic = dict(table=table, instructions=__inst, conditions=__cond)
+        try:
+            self.__db.execute(__delete_query, __conditions, True)
+            response = dict(error=0, text="success")
+        except Exception:
+            response = dict(error=0002, text="There was an error deleting")
 
-        pattern = re.compile(r'\b(' + '|:'.join(dic.keys()) + r')\b')
-        result = pattern.SUB(lambda x: dic[x.group()], __query)
-
-        return result
+        return response
