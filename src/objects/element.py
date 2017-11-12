@@ -15,6 +15,13 @@ class Element(ObjectExt):
     @attribute container
     """
 
+    ID = "ELEMENT_ID"
+    NAME = "ELEMENT_NAME"
+    PARENT = "PARENT_ELEMENT_ID"
+    TYPE = "ELEMENT_TYPE_ID"
+    ACTIVE = "IS_ACTIVE"
+    CONTAINER = "IS_CONTAINER"
+
     def __init__(self):
         """
         Constructor

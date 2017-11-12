@@ -6,6 +6,7 @@ This file will handle every possible action for the elements
 from src.services.elements_service import ElementsService as es
 from src.objects.element import Element, ElementType, DataType
 from src.objects.object_extend import ObjectExt
+from src.objects.action import Action as actions
 
 
 class ElementsController(ObjectExt):
@@ -43,14 +44,13 @@ class ElementsController(ObjectExt):
 
         print action, id_element
 
-        if action == "save":
+        if action == actions.SAVE:
             self.save_element(id_element, req)
-        elif action == 'edit':
-            print "action:", id_element
-            self.get_elements(id_element)
-        elif action == 'delete':
+        elif action == actions.DELETE:
             self.delete_element(id_element)
         else:
+            if action == actions.EDIT:
+                self.get_elements(id_element)
             self.get_elements(parent=is_parent)
 
         self.get_element_types()
@@ -64,12 +64,12 @@ class ElementsController(ObjectExt):
 
         print action, id_element_type
 
-        if action == "save":
+        if action == actions.SAVE:
             self.save_element_type(id_element_type, req)
-        elif action == 'edit':
+        elif action == actions.EDIT:
             print "action:", id_element_type
             self.get_element_types(id_element_type)
-        elif action == 'delete':
+        elif action == actions.DELETE:
             self.delete_element_type(id_element_type)
         else:
             self.get_element_types()
@@ -85,12 +85,12 @@ class ElementsController(ObjectExt):
 
         print action, id_data_type
 
-        if action == "save":
+        if action == actions.SAVE:
             self.save_data_type(id_data_type, req)
-        elif action == 'edit':
+        elif action == actions.EDIT:
             print "action:", id_data_type
             self.get_data_types(id_data_type)
-        elif action == 'delete':
+        elif action == actions.DELETE:
             self.delete_data_type(id_data_type)
         else:
             self.get_data_types()
@@ -117,12 +117,12 @@ class ElementsController(ObjectExt):
         """
         e_filter = {}
         if id_element is not None and parent is False:
-            e_filter["ELEMENT_ID"] = self.decrypt(id_element)
+            e_filter[Element.ID] = self.decrypt(id_element)
             __elements = self.__es.get_elements(e_filter)
             self.element = self.get_element_from_row(__elements[0])
         else:
             if parent is True:
-                e_filter["PARENT_ELEMENT_ID"] = self.decrypt(id_element)
+                e_filter[Element.PARENT] = self.decrypt(id_element)
 
             __elements = self.__es.get_elements(e_filter)
             elements = []
@@ -150,12 +150,12 @@ class ElementsController(ObjectExt):
 
         __element = {}
 
-        __element["ELEMENT_ID"] = __id
-        __element["ELEMENT_NAME"] = __name
-        __element["PARENT_ELEMENT_ID"] = __parent_id
-        __element["ELEMENT_TYPE_ID"] = __type_id
-        __element["IS_CONTAINER"] = __is_container
-        __element["IS_ACTIVE"] = 1
+        __element[Element.ID] = __id
+        __element[Element.NAME] = __name
+        __element[Element.PARENT] = __parent_id
+        __element[Element.TYPE] = __type_id
+        __element[Element.CONTAINER] = __is_container
+        __element[Element.ACTIVE] = 1
 
         __response = self.__es.save_element(__element)
         self.response = __response

@@ -18,7 +18,7 @@ bootstrap_cols = cols
         </thead>
         <tbody>
             %for element in data_e.get("elements"):
-            <tr data-element="{{element.get_id(True)}}" 
+            <tr data-element="{{element.get_id(True)}}"
                 {{!'data-parent="element.get_parent_id()"' if element.get_parent_id() > 0 else ''}}
             >
                 <td>
@@ -62,13 +62,17 @@ bootstrap_cols = cols
                 <input class="form-control" type="text" id="name" name="name" value="{{element.get_name()}}" />
             </div>
             <div class="content-form col-md">
-                <label for="name">Tipo</label>
+                <label for="parent_id">Padre</label>
+                % include('combo.tpl', value_name="id", text_name="name", items=data_e.get("elements"), id_combo="parent_id", value=element.get_parent_id())
+            </div>
+            <div class="content-form col-md">
+                <label for="type_id">Tipo</label>
                 % include('combo.tpl', value_name="id", text_name="name", items=data_e.get("element_types"), id_combo="type_id", value=element.get_type_id())
             </div>
         </div>
         <div class="form-check">
             <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" 
+                <input class="form-check-input" type="checkbox"
                     id="is_container" name="is_container" value="it_is"
                     {{!'checked="checked"' if element.is_container() else ''}} />
                 Contenedor
