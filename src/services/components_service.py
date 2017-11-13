@@ -25,7 +25,7 @@ class  ComponentsService(object):
             __query += " WHERE "
             for key in filters:
                 __query += key + " = :" + key
-        
+
         print __query
 
         response = self.__db.execute(__query, filters, True).fetchall()
@@ -40,7 +40,7 @@ class  ComponentsService(object):
                                 IS_GENERIC = :IS_GENERIC,
                                 IS_ACTIVE = :IS_ACTIVE
                             WHERE COMPONENT_ID = :COMPONENT_ID
-        """    
+        """
 
         __insert_query = """INSERT INTO
                             COMPONENTS(COMPONENTS_NAME, IS_ACTIVE, IS_CONTAINER)
@@ -64,4 +64,17 @@ class  ComponentsService(object):
 
         return response
 
-    
+    def get_elements(self, id_component):
+        """get_elements method
+        @param id_component
+        this method returns the elements of a specific component
+        """
+
+        filters = {}
+        __conditions = {Component.ID=id_component}
+        __join_fields = [Element.ID]
+        __query = self.__db.get_join_select(filters, __conditions, __join_fields, "COMPONENT_ELEMENTS", "ELEMENTS")
+        print __query
+
+        response = self.__db.execute(__query, filters, True).fetchall()
+        return response
