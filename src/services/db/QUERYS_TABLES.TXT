@@ -23,6 +23,7 @@ ALTER TRIGGER  "BI_DATA_TYPES" ENABLE;
 ------------------------------------------------------------------------------------------------------------------
 ELEMENT_TYPES-----------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------
+
 CREATE TABLE  "ELEMENT_TYPES"
    (	"ELEMENT_TYPE_ID" NUMBER(5,0),
 	"ELEMENT_TYPE_NAME" VARCHAR2(70),
@@ -81,10 +82,10 @@ COMPONENTS----------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------
 
 CREATE TABLE "COMPONENTS"
-  ( "COMPONENT_ID", NUMBER(5,0),
-    "COMPONENT_NAME", VARCHAR2(70),
-    "IS_GENERIC", NUMBER(1,0),
-    "IS_ACTIVE", NUMNER(1,0),
+  ( "COMPONENT_ID" NUMBER(5,0),
+    "COMPONENT_NAME" VARCHAR2(70),
+    "IS_GENERIC" NUMBER(1,0),
+    "IS_ACTIVE" NUMBER(1,0),
     CONSTRAINT "COMPONENTS_PK" PRIMARY KEY ("COMPONENT_ID") ENABLE,
     CONSTRAINT "COMPONENTS_CK1" CHECK (IS_GENERIC IN (1,0)) ENABLE,
     CONSTRAINT "COMPONENTS_CK2" CHECK (IS_ACTIVE IN (1,0)) ENABLE
@@ -105,21 +106,20 @@ CREATE TABLE "COMPONENTS"
 ------------------------------------------------------------------------------------------------------------------
 COMPONENT_ELEMENTS------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------
+CREATE table "COMPONENT_ELEMENTS" (
+    "COMPONENT_ELEMENT_ID" NUMBER(10,0),
+    "COMPONENT_ID"         NUMBER(5,0),
+    "ELEMENT_ID"           NUMBER(5,0),
+    "POSITION"             NUMBER(1,0),
+    "COUNTER"              NUMBER(2,0),
+    constraint  "COMPONENT_ELEMENTS_PK" primary key ("COMPONENT_ELEMENT_ID")
+)
+/
 
-CREATE TABLE  "COMPONENT_ELEMENTS"
-   (
-   "COMPONENT_ELEMENT_ID" NUMBER(5,0),
-   "COMPONENT_ID" NUMBER(5,0),
-   "ELEMENT_ID" NUMBER(5,0),
-	 "COLUMN" NUMBER(1,0),
-	 "ORDER" NUMBER(2,0),
-	 CONSTRAINT "COMPONENT_ELEMENTS_PK" PRIMARY KEY ("COMPONENT_ELEMENT_ID") ENABLE,
-   CONSTRAINT "COMPONENT_ELEMENTS_CK1" CHECK (COLUMN IN (1,2,3)) ENABLE,
-   ) ;ALTER TABLE  "COMPONENT_ELEMENTS" ADD CONSTRAINT "COMPONENT_ELEMENTS_FK_1" FOREIGN KEY ("COMPONENT_ID")
-	  REFERENCES  "COMPONENTS" ("COMPONENT_ID") ON DELETE CASCADE ENABLE;ALTER TABLE  "COMPONENT_ELEMENTS" ADD CONSTRAINT "ELEMENTS_FK_2" FOREIGN KEY ("ELEMENT__ID")
-	  REFERENCES  "ELEMENTS" ("ELEMENT_ID") ENABLE;
+CREATE sequence "COMPONENT_ELEMENTS_SEQ"
+/
 
-CREATE OR REPLACE TRIGGER  "BI_COMPONENT_ELEMENTS"
+CREATE trigger "BI_COMPONENT_ELEMENTS"
   before insert on "COMPONENT_ELEMENTS"
   for each row
 begin
@@ -127,6 +127,19 @@ begin
     select "COMPONENT_ELEMENTS_SEQ".nextval into :NEW."COMPONENT_ELEMENT_ID" from dual;
   end if;
 end;
+/
+
+ALTER TABLE "COMPONENT_ELEMENTS" ADD CONSTRAINT "COMPONENT_ELEMENTS_FK"
+FOREIGN KEY ("COMPONENT_ID")
+REFERENCES "COMPONENTS" ("COMPONENT_ID")
 
 /
-ALTER TRIGGER  "BI_COMPONENT_ELEMENTS" ENABLE;
+ALTER TABLE "COMPONENT_ELEMENTS" ADD CONSTRAINT "COMPONENT_ELEMENTS_FK2"
+FOREIGN KEY ("ELEMENT_ID")
+REFERENCES "ELEMENTS" ("ELEMENT_ID")
+
+/
+alter table "COMPONENT_ELEMENTS" add
+constraint "COMPONENT_ELEMENTS_CK1"
+check (POSITION IN(1,2,3))
+/
