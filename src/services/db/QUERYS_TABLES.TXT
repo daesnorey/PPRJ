@@ -101,3 +101,32 @@ CREATE TABLE "COMPONENTS"
 
   /
   ALTER TRIGGER  "BI_COMPONENTS" ENABLE;
+
+------------------------------------------------------------------------------------------------------------------
+COMPONENT_ELEMENTS------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+CREATE TABLE  "COMPONENT_ELEMENTS"
+   (
+   "COMPONENT_ELEMENT_ID" NUMBER(5,0),
+   "COMPONENT_ID" NUMBER(5,0),
+   "ELEMENT_ID" NUMBER(5,0),
+	 "COLUMN" NUMBER(1,0),
+	 "ORDER" NUMBER(2,0),
+	 CONSTRAINT "COMPONENT_ELEMENTS_PK" PRIMARY KEY ("COMPONENT_ELEMENT_ID") ENABLE,
+   CONSTRAINT "COMPONENT_ELEMENTS_CK1" CHECK (COLUMN IN (1,2,3)) ENABLE,
+   ) ;ALTER TABLE  "COMPONENT_ELEMENTS" ADD CONSTRAINT "COMPONENT_ELEMENTS_FK_1" FOREIGN KEY ("COMPONENT_ID")
+	  REFERENCES  "COMPONENTS" ("COMPONENT_ID") ON DELETE CASCADE ENABLE;ALTER TABLE  "COMPONENT_ELEMENTS" ADD CONSTRAINT "ELEMENTS_FK_2" FOREIGN KEY ("ELEMENT__ID")
+	  REFERENCES  "ELEMENTS" ("ELEMENT_ID") ENABLE;
+
+CREATE OR REPLACE TRIGGER  "BI_COMPONENT_ELEMENTS"
+  before insert on "COMPONENT_ELEMENTS"
+  for each row
+begin
+  if :NEW."COMPONENT_ELEMENT_ID" is null then
+    select "COMPONENT_ELEMENTS_SEQ".nextval into :NEW."COMPONENT_ELEMENT_ID" from dual;
+  end if;
+end;
+
+/
+ALTER TRIGGER  "BI_COMPONENT_ELEMENTS" ENABLE;
