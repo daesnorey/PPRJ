@@ -5,6 +5,7 @@ the crud operation for elements, element_types and data_types
 """
 
 from src.services.db.oracle import Oracle
+from src.objects.element import Element
 
 class ElementsService(object):
     """
@@ -26,14 +27,14 @@ class ElementsService(object):
         """
         save_element
         """
-        response = self.__db.save("ELEMENTS", element, "ELEMENT_ID")
+        response = self.__db.save("ELEMENTS", element, Element.ID)
         return response
 
     def delete_element(self, id_element):
         """
         delete an element with a given id if id_element is None then I will return an error
         """
-        response = self.__db.delete("ELEMENTS", "ELEMENT_ID", id_element)
+        response = self.__db.delete("ELEMENTS", Element.ID, id_element)
         return response
 
     def get_element_types(self, filters={}):

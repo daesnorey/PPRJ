@@ -240,12 +240,12 @@ class Oracle(object):
 
         __conditions = {name_id:id_object}
 
-        __delete_query = self.__db.get_query(table, conditions=__conditions, action=3)
+        __delete_query = self.get_query(table, conditions=__conditions, action=3)
 
         response = {}
 
         try:
-            self.__db.execute(__delete_query, __conditions, True)
+            self.execute(__delete_query, __conditions, True)
             response = dict(error=0, text="success")
         except Exception:
             response = dict(error=0002, text="There was an error deleting")
