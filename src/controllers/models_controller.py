@@ -3,12 +3,10 @@ elements_controller.py
 This file will handle the actions related with models
 """
 
-import sys
-sys.path.insert(0, "src/services")
-sys.path.insert(1, "src/objects")
-from models_service import ModelsService as ms
-from model import Model
-from object_extend import ObjectExt
+from src.services.models_service import ModelsService as ms
+from src.objects.model import Model
+from src.objects.object_extend import ObjectExt
+from src.objects.action import Action as actions
 
 class ModelsController(ObjectExt):
     """
@@ -22,7 +20,7 @@ class ModelsController(ObjectExt):
         self.action = action
         self.data = {}
 
-    def evaluate(self, id_model):
+    def evaluate(self, id_model, req=None):
         """
         Metodo que evalua la accion a realizar y ejecuta los metodos pertinentes
         """
@@ -35,6 +33,8 @@ class ModelsController(ObjectExt):
         elif action == 'edit':
             print "action:", id_model
             self.__get_models(id_model)
+        elif action == actions.SAVE:
+            self.save_model(id_element, req):
         self.__set_data()
 
     def __get_model_by_row(self, row):
@@ -61,6 +61,22 @@ class ModelsController(ObjectExt):
             models.append(self.model)
 
         self.models = models
+    
+    def save_model(self, id_model, req):
+        """
+        save_model
+        """
+        __name = req.forms.get("name")
+        __id = int(self.decrypt(id_model))
+
+
+        __element = {}
+
+        __element[Element.ID] = __id
+        __element[Element.NAME] = __name
+        __element[Element.ACTIVE] = 1
+
+        self.response = self.__ms.save_element(__element)
 
     def __set_data(self):
         """
