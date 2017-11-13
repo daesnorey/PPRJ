@@ -5,6 +5,7 @@ Server web appliation, will take the requests and route them to their controller
 
 from bottle import route, run, view, request, static_file
 from src.controllers.elements_controller import ElementsController as ec
+from src.controllers.components_controller import ComponentsController as cc
 from src.controllers.models_controller import ModelsController as mc
 
 @route("/elements")
@@ -92,6 +93,19 @@ def data_types_action(action, id_type):
     element_controller.evaluate_data_types(id_type, request)
 
     return element_controller.response
+
+@route("/components/<id_component>/elements")
+@view("elements_template")
+def component_elements(id_component):
+    __elements = cc().get_elements(id_component)
+
+    elements_controller = ec(actions.VIEW)
+    elements_controller.evaluate_elements()
+    __data = element_controller.data
+    __data.elements = __elements
+
+    return dict(action=actions.VIEW, data_e=__data, cols=12)
+
 
 @route("/models")
 @route("/models/<action>")
