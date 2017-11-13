@@ -13,6 +13,12 @@ class Component(ObjectExt):
     @attribute is_generic
     @attribute is_active
     """
+
+    ID = "COMPONENT_ID"
+    NAME = "COMPONENT_NAME"
+    GENERIC = "IS_GENERIC"
+    ACTIVE = "IS_ACTIVE"
+
     def __init__(self):
         """
         Constructor
