@@ -7,6 +7,7 @@ from bottle import route, run, view, request, static_file
 from src.controllers.elements_controller import ElementsController as ec
 from src.controllers.components_controller import ComponentsController as cc
 from src.controllers.models_controller import ModelsController as mc
+from src.objects.action import Action as actions
 
 @route("/elements")
 @route("/elements/<action>")
@@ -101,7 +102,7 @@ def component_elements(id_component):
 
     elements_controller = ec(actions.VIEW)
     elements_controller.evaluate_elements()
-    __data = element_controller.data
+    __data = elements_controller.data
     __data.elements = __elements
 
     return dict(action=actions.VIEW, data_e=__data, cols=12)
