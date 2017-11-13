@@ -7,3 +7,4 @@ class Action(object):
     SAVE = "save"
     EDIT = "edit"
     DELETE = "delete"
+    VIEW = "view"

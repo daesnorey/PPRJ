@@ -214,7 +214,7 @@ class Oracle(object):
                 __condition = {name_id:id_object}
                 __update_query = self.get_query(table, fields=__fields, conditions=__condition, action=2)
                 print __update_query
-                self.execute(__update_query, element, True)
+                self.execute(__update_query, __fields, True)
             else:
                 print "Insert"
                 __insert_query = self.get_query(table, fields=__fields, action=0)

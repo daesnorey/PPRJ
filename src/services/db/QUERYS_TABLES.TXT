@@ -104,6 +104,28 @@ CREATE TABLE "COMPONENTS"
   ALTER TRIGGER  "BI_COMPONENTS" ENABLE;
 
 ------------------------------------------------------------------------------------------------------------------
+MODELS--------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+CREATE TABLE  "MODELS"
+   (	"MODEL_ID" NUMBER(5,0),
+	"MODEL_NAME" VARCHAR2(70),
+	"IS_ACTIVE" NUMBER(1,0),
+	 CONSTRAINT "MODELS_PK" PRIMARY KEY ("MODEL_ID") ENABLE,
+	 CONSTRAINT "MODELS_CK1" CHECK (IS_ACTIVE IN (0,1)) ENABLE
+   ) ;
+
+  CREATE OR REPLACE TRIGGER  "BI_MODELS"
+    before insert on "MODELS"
+    for each row
+  begin
+    if :NEW."MODEL_ID" is null then
+      select "MODELS_SEQ".nextval into :NEW."MODEL_ID" from dual;
+    end if;
+  end;
+  /
+  ALTER TRIGGER  "BI_MODELS" ENABLE;
+
+------------------------------------------------------------------------------------------------------------------
 COMPONENT_ELEMENTS------------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------------------------------
 CREATE table "COMPONENT_ELEMENTS" (
