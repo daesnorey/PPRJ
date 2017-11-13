@@ -109,12 +109,18 @@ def component_elements(id_component):
 
 @route("/models")
 @route("/models/<action>")
-def models(action="view"):
+@route("/models/<action>/<id_model>")
+@view("models_template")
+def models(action="view", id_model=None):
     """
     Metodo que manejara el comportamiento de los modelos
     """
     model_controller = mc(action)
-    model_controller.evaluate()
+    model_controller.evaluate(id_model)
+
+    print model_controller.data
+
+    return dict(action=action, data_e=model_controller.data, cols=12)
 
 @route("/")
 @view("index_template")

@@ -32,7 +32,7 @@ class Model(ObjectExt):
         returns a number value
         """
         if encrypt is True:
-            return str(self.__id) + "ss"
+            return self.encrypt("id")
         else:
             return self.__id
 
