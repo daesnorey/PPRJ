@@ -212,14 +212,14 @@ class Oracle(object):
             if id_object > 0:
                 print "Update"
                 __condition = {name_id:id_object}
-                __update_query = self.__db.get_query(table, fields=__fields, conditions=__condition, action=2)
+                __update_query = self.get_query(table, fields=__fields, conditions=__condition, action=2)
                 print __update_query
-                self.__db.execute(__update_query, element, True)
+                self.execute(__update_query, __fields, True)
             else:
                 print "Insert"
-                __insert_query = self.__db.get_query(table, fields=__fields, action=0)
+                __insert_query = self.get_query(table, fields=__fields, action=0)
                 print __insert_query
-                self.__db.execute(__insert_query, __fields, True)
+                self.execute(__insert_query, __fields, True)
             response = dict(error=0, text="success")
         except Exception as e:
             print e
