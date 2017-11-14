@@ -9,6 +9,9 @@ class Model(ObjectExt):
     """
     Model class has the attributes and methods to carrie the information
     """
+    ID = "MODEL_ID"
+    NAME = "MODEL_NAME"
+    ACTIVE = "IS_ACTIVE"
 
     def __init__(self):
         """
