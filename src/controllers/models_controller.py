@@ -29,13 +29,14 @@ class ModelsController(ObjectExt):
 
         print action
 
-        if action == "view":
+        if action == actions.VIEW:
             self.__get_models()
-        elif action == 'edit':
-            print "action:", id_model
+        elif action == actions.EDIT:
             self.__get_models(id_model)
         elif action == actions.SAVE:
             self.save_model(id_model, req)
+        elif action == actions.DELETE:
+            self.delete_model(id_model)
         self.__set_data()
 
     def __get_model_by_row(self, row):
@@ -77,6 +78,15 @@ class ModelsController(ObjectExt):
         __model[Model.ACTIVE] = 1
 
         self.response = self.__ms.save_model(__model)
+
+    def delete_model(self, id_model):
+        """
+        delete_element
+        """
+        __id = int(self.decrypt(id_model))
+
+        __response = self.__ms.delete_model(__id)
+        self.response = __response
 
     def __set_data(self):
         """
