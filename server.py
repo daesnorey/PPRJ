@@ -111,13 +111,25 @@ def component_elements(id_component):
 @route("/models/<action>/<id_model>")
 @view("models_template")
 def models(action="view", id_model=None):
-    """Metodo que manejara el comportamiento de los modelos."""
+    """
+    Metodo que manejara el comportamiento de los modelos
+    """
     model_controller = mc(action)
     model_controller.evaluate(id_model)
 
     print model_controller.data
 
     return dict(action=action, data_e=model_controller.data, cols=12)
+
+
+@route("/models/<action>/<id_model>", method='POST')
+def models_action(action, id_model):
+    """Metodo que manejara el comportamiento de los modelos."""
+    print "models_action", id_model
+    model_controller = mc(action)
+    model_controller.evaluate(id_model, request)
+
+    return element_controller.response
 
 
 @route("/")

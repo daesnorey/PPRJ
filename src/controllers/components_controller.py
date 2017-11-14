@@ -14,6 +14,6 @@ class ComponentsController(ObjectExt):
     def get_elements(self, id_component):
         __id_component = self.decrypt(id_component)
 
-        e_filter = {Component.ID:__id_component}
+        e_filter = {Component.ID: __id_component}
         __elements = self.__cs.get_elements(e_filter)
         return __elements

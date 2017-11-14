@@ -37,7 +37,7 @@ class  ComponentsService(object):
         """
 
         filters = {}
-        __conditions = {Component.ID=id_component}
+        __conditions = {Component.ID:id_component}
         __join_fields = [Element.ID]
         __query = self.__db.get_join_select(filters, __conditions, __join_fields, "COMPONENT_ELEMENTS", "ELEMENTS")
         print __query
