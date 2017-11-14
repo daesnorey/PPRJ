@@ -2,7 +2,7 @@
 
 from src.objects.object_extend import ObjectExt
 from src.objects.component import Component
-from src.services.components_services import ComponentsServices as cs
+from src.services.components_service import ComponentsService as cs
 
 
 class ComponentsController(ObjectExt):
