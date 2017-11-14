@@ -19,6 +19,7 @@ class ModelsController(ObjectExt):
         self.models = []
         self.action = action
         self.data = {}
+        self.response = None
 
     def evaluate(self, id_model, req=None):
         """
@@ -34,7 +35,7 @@ class ModelsController(ObjectExt):
             print "action:", id_model
             self.__get_models(id_model)
         elif action == actions.SAVE:
-            self.save_model(id_element, req):
+            self.save_model(id_model, req)
         self.__set_data()
 
     def __get_model_by_row(self, row):
@@ -61,7 +62,7 @@ class ModelsController(ObjectExt):
             models.append(self.model)
 
         self.models = models
-    
+
     def save_model(self, id_model, req):
         """
         save_model
@@ -69,14 +70,13 @@ class ModelsController(ObjectExt):
         __name = req.forms.get("name")
         __id = int(self.decrypt(id_model))
 
+        __model = {}
 
-        __element = {}
+        __model[Model.ID] = __id
+        __model[Model.NAME] = __name
+        __model[Model.ACTIVE] = 1
 
-        __element[Element.ID] = __id
-        __element[Element.NAME] = __name
-        __element[Element.ACTIVE] = 1
-
-        self.response = self.__ms.save_element(__element)
+        self.response = self.__ms.save_model(__model)
 
     def __set_data(self):
         """

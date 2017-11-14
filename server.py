@@ -129,7 +129,7 @@ def models_action(action, id_model):
     model_controller = mc(action)
     model_controller.evaluate(id_model, request)
 
-    return element_controller.response
+    return model_controller.response
 
 
 @route("/")
@@ -152,4 +152,4 @@ def css_loader(file_name):
     return static_file(file_name, root='./styles')
 
 
-run(host='localhost', port=1994, debug=True, reloader=True)
+run(host='localhost', port=1990, debug=True, reloader=True)

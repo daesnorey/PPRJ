@@ -19,9 +19,9 @@ class ModelsService(object):
         get models in data base with filters
         """
                
-        __query = self.__db.get_query("ELEMENTS", conditions=filters)
+        __query = self.__db.get_query("MODELS", conditions=filters)
         print __query
-        
+
         response = self.__db.execute(__query, filters, True).fetchall()
         print ("msResponse", response)
         return response
