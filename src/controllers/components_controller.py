@@ -1,3 +1,4 @@
+from src.services.components_service import ComponentsService as cs
 from src.objects.object_extend import ObjectExt
 from src.objects.component import Component
 
