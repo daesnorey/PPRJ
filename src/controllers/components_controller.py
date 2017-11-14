@@ -9,9 +9,14 @@ class ComponentsController(ObjectExt):
     """ComponentsController."""
 
     def __init__(self):
+        """Constructor."""
         self.__cs = cs()
 
     def get_elements(self, id_component):
+        """Metthod get_elements.
+
+        will get the elements of an specific component.
+        """
         __id_component = self.decrypt(id_component)
 
         e_filter = {Component.ID: __id_component}
