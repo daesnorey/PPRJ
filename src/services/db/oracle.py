@@ -1,23 +1,22 @@
-"""
+"""oracle.py.
+
 db_connection.py file will contain the connection behaviour
 to the database
 """
-import re
 import cx_Oracle
+import copy
 
 
 class Oracle(object):
-    """
-    Oracle class will handle the conection to the database
-    """
+    """Oracle class will handle the conection to the database."""
 
     def __init__(self):
+        """Constructor."""
         self.__data_base = None
         self.__cursor = None
 
     def __open(self, debug=False):
-        """ Connect to the database """
-
+        """Connect to the database."""
         username = 'PPRJ'
         password = 'PPRJ123'
         hostname = '127.0.0.1'
@@ -53,16 +52,14 @@ class Oracle(object):
         self.__cursor = None
 
     def get_cursor(self):
-        """ get cursor connection """
+        """Get cursor connection."""
         if self.__cursor is None:
             self.__open()
 
         return self.__cursor
 
     def execute(self, query, bindvars=None, commit=False):
-        """ execute query
-            return cursor
-        """
+        """Execute query, return cursor."""
         response = self.get_cursor().execute(query, bindvars)
 
         if commit is True:
@@ -70,16 +67,18 @@ class Oracle(object):
 
         return response
 
-    #######################################################################33
-    def get_join_select(self, fields=[], conditions={}, join_fields={}, *table):
+#######################################################################
+    def get_join_select(self, fields=[], conditions={},
+                        join_fields={}, *table):
         """get_query.
-            @param table: table name in database
-            @param fields: dictionary which contain the fields to affect.
-            @param condition: dictionary which contain the fields and values to filter
-        """
 
+        @param table: table name in database
+        @param fields: dictionary which contain the fields to affect.
+        @param condition: dictionary which contain the fields and
+        values to filter
+        """
         print table
-        __inst  = self.get_join_instruction(fields, len(table), join_fields)
+        __inst = self.get_join_instruction(fields, len(table), join_fields)
         __inst += self.get_conditions(1, conditions)
 
         query = __inst
@@ -91,10 +90,11 @@ class Oracle(object):
         return query
 
     def get_join_instruction(self, fields, n_tables=1, join=[]):
-        """get_instruction
-	       This method will evaluate the action and will return the right instruction
-        """
+        """get_instruction.
 
+        This method will evaluate the action and will return the right
+        instruction
+        """
         __ini = "SELECT :fields FROM :table0"
         if n_tables > 1:
             for n in range(n_tables - 1):
@@ -121,17 +121,18 @@ class Oracle(object):
 
         response = __ini.replace(":fields", __inst)
         return response
-    #######################################################################33
+#######################################################################
 
     def get_query(self, table, fields=[], conditions={}, action=1):
         """get_query.
-            @param table: table name in database
-            @param fields: dictionary which contain the fields to affect.
-            @param condition: dictionary which contain the fields and values to filter
-            @param action: 0=INSERT, 1=SELECT, 2=UPDATE, 3=DELETE
-        """
 
-        __inst  = self.get_instruction(action, fields)
+        @param table: table name in database
+        @param fields: dictionary which contain the fields to affect.
+        @param condition: dictionary which contain the fields and values to
+        filter
+        @param action: 0=INSERT, 1=SELECT, 2=UPDATE, 3=DELETE
+        """
+        __inst = self.get_instruction(action, fields)
         __inst += self.get_conditions(action, conditions)
 
         query = __inst.replace(":table", table)
@@ -139,10 +140,11 @@ class Oracle(object):
         return query
 
     def get_instruction(self, action, fields):
-        """get_instruction
-	       This method will evaluate the action and will return the right instruction
-        """
+        """get_instruction.
 
+        This method will evaluate the action and will return the right
+        instruction
+        """
         __ini = ""
 
         if action == 0:
@@ -171,16 +173,18 @@ class Oracle(object):
         if not fields and action == 1:
             __inst = "*"
 
-        response = __ini.replace(":fields", __inst).replace(":values", __values)
+        response = __ini.replace(":fields", __inst).replace(":values",
+                                                            __values)
         return response
 
     def get_conditions(self, action, conditions):
-        """get_conditions
-	       this method will evaluate the action and the conditions
-           if the action is 0 or there are no conditions then it returns an empty string
-           otherwise it return the right condition
-        """
+        """get_conditions.
 
+        this method will evaluate the action and the conditions
+        if the action is 0 or there are no conditions then it returns an empty
+        string
+        otherwise it return the right condition
+        """
         if action == 0 or len(conditions) == 0:
             return ""
 
@@ -196,13 +200,13 @@ class Oracle(object):
         return __condition
 
     def save(self, table, generic_object, name_id):
-        """
-        save
+        """save.
+
         @attribute table
         @attribute generic_object
         @attribute name_id
         """
-        __fields = generic_object
+        __fields = copy.copy(generic_object)
         del __fields[name_id]
 
         id_object = generic_object[name_id]
@@ -211,13 +215,15 @@ class Oracle(object):
         try:
             if id_object > 0:
                 print "Update"
-                __condition = {name_id:id_object}
-                __update_query = self.get_query(table, fields=__fields, conditions=__condition, action=2)
+                __condition = {name_id: id_object}
+                __update_query = self.get_query(table, __fields, __condition,
+                                                action=2)
                 print __update_query
-                self.execute(__update_query, __fields, True)
+                self.execute(__update_query, generic_object, True)
             else:
                 print "Insert"
-                __insert_query = self.get_query(table, fields=__fields, action=0)
+                __insert_query = self.get_query(table, fields=__fields,
+                                                action=0)
                 print __insert_query
                 self.execute(__insert_query, __fields, True)
             response = dict(error=0, text="success")
@@ -228,19 +234,19 @@ class Oracle(object):
         return response
 
     def delete(self, table, name_id, id_object):
-        """
-        delete
+        """delete.
+
         @attribute table
         @attribute name_id
         @attribute id_object
         """
-
         if not id_object:
             return dict(error=0002, text="Data incomplete at delete")
 
-        __conditions = {name_id:id_object}
+        __conditions = {name_id: id_object}
 
-        __delete_query = self.get_query(table, conditions=__conditions, action=3)
+        __delete_query = self.get_query(table, conditions=__conditions,
+                                        action=3)
 
         response = {}
 
