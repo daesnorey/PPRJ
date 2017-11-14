@@ -8,6 +8,7 @@ from src.objects.model import Model
 from src.objects.object_extend import ObjectExt
 from src.objects.action import Action as actions
 
+
 class ModelsController(ObjectExt):
     """
     Class for manipulate the actions
@@ -22,7 +23,8 @@ class ModelsController(ObjectExt):
 
     def evaluate(self, id_model, req=None):
         """
-        Metodo que evalua la accion a realizar y ejecuta los metodos pertinentes
+        Metodo que evalua la accion a realizar y ejecuta los metodos
+        pertinentes
         """
         action = self.action
 
@@ -34,7 +36,7 @@ class ModelsController(ObjectExt):
             print "action:", id_model
             self.__get_models(id_model)
         elif action == actions.SAVE:
-            self.save_model(id_element, req):
+            self.save_model(id_model, req)
         self.__set_data()
 
     def __get_model_by_row(self, row):
@@ -52,7 +54,7 @@ class ModelsController(ObjectExt):
         m_filter = {}
         if id_model is not None:
             m_filter["MODEL_ID"] = self.decrypt(id_model)
-        
+
         __models = self.__ms.get_models(m_filter)
         models = []
 
@@ -61,7 +63,7 @@ class ModelsController(ObjectExt):
             models.append(self.model)
 
         self.models = models
-    
+
     def save_model(self, id_model, req):
         """
         save_model
@@ -69,12 +71,11 @@ class ModelsController(ObjectExt):
         __name = req.forms.get("name")
         __id = int(self.decrypt(id_model))
 
-
         __element = {}
 
-        __element[Element.ID] = __id
-        __element[Element.NAME] = __name
-        __element[Element.ACTIVE] = 1
+        __element[Model.ID] = __id
+        __element[Model.NAME] = __name
+        __element[Model.ACTIVE] = 1
 
         self.response = self.__ms.save_element(__element)
 
@@ -82,4 +83,4 @@ class ModelsController(ObjectExt):
         """
         set_data docstring
         """
-        self.data = {"models": self.models, "model":self.model}
+        self.data = {"models": self.models, "model": self.model}

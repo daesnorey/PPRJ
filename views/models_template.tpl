@@ -7,7 +7,7 @@ bootstrap_cols = cols
 
 %if action == "view":
 <div class="col-md-{{bootstrap_cols}} mt-5">
-    
+
     <table class="table">
         <thead>
             <tr>
@@ -23,7 +23,7 @@ bootstrap_cols = cols
                 </td>
                 <td>
                     <a href="/models/edit/{{model.get_id(True)}}" class="btn btn-primary">Editar</a>
-                    <a href="javascript:void(0)" data-link="/models/delete/{{model.get_id(True)}}" class="btn btn-danger" onclick="send(this)">Eliminar</a>
+                    <a href="javascript:void(0)" data-link="/models/delete/{{model.get_id(True)}}" data-button="" class="btn btn-danger" >Eliminar</a>
                 </td>
                 <!--
                 %if model.is_active():
@@ -35,7 +35,7 @@ bootstrap_cols = cols
                     Inactivo
                 </span>
                 %end
-                
+
                 -->
             </tr>
             %end

@@ -8,9 +8,7 @@ from src.objects.component import Component
 from src.objects.element import Element
 
 class  ComponentsService(object):
-    """
-    ComponentsService class
-    """
+    """ComponentsService class."""
 
     def __init__(self):
         self.__db = Oracle()
