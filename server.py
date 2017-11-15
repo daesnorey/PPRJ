@@ -123,7 +123,8 @@ def component_elements(id_component, action=actions.VIEW):
     elements_controller = ec(action)
     elements_controller.evaluate_elements()
     __data = elements_controller.data
-    __data.elements = __elements
+    print "__data", __data
+    __data["elements"] = __elements
 
     print __data
 
@@ -174,4 +175,4 @@ def css_loader(file_name):
     return static_file(file_name, root='./styles')
 
 
-run(host='localhost', port=1998, debug=True, reloader=True)
+run(host='localhost', port=2010, debug=True, reloader=True)
