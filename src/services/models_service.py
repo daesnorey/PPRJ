@@ -15,11 +15,12 @@ class ModelsService(object):
     def __init__(self):
         self.__db = Oracle()
 
-    def get_models(self, filters={}):
+    def get_models(self, filters=None):
         """
         get models in data base with filters
         """
-               
+        if not filters:
+            filters = {}
         __query = self.__db.get_query("MODELS", conditions=filters)
         print __query
 
