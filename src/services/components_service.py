@@ -44,14 +44,27 @@ class  ComponentsService(object):
         this method returns the elements of a specific component
         """
 
-        filters = {}
-        __conditions = {Component.ID: id_component}
-        print "__conditions", __conditions
+        __tbl_0 = "COMPONENT_ELEMENTS"
+        __tbl_1 = "ELEMENTS"
+        __pre_tb0 = __tbl_0 + "."
+        __pre_tb1 = __tbl_1 + "."
+        __fields = [__pre_tb1 + Element.ID,
+                    __pre_tb1 + Element.NAME,
+                    __pre_tb1 + Element.CONTAINER,
+                    __pre_tb0 + "SORT"]
+        filters = {Component.ID: id_component, Element.ACTIVE: 1}
         __join_fields = [[Element.ID]]
-        print "__join_fields", __join_fields
-        __query = self.__db.get_join_select(filters, __conditions, __join_fields,
-                                            "COMPONENT_ELEMENTS", "ELEMENTS")
-        print __query
+        __query = self.__db.get_join_select(__fields, filters, __join_fields,
+                                            __tbl_0, __tbl_1)
 
         response = self.__db.execute(__query, filters, True).fetchall()
-        return response
+
+        elements = []
+        for row in response:
+            __element = Element()
+            __element.set_id(row[0])
+            __element.set_name(row[1])
+            __element.set_container(row[2])
+            elements.append(__element)
+
+        return elements
