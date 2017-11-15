@@ -92,16 +92,40 @@ def data_types_action(action, id_type):
     return element_controller.response
 
 
-@route("/components/<id_component>/elements")
-@view("elements_template")
-def component_elements(id_component):
-    """Component elements."""
-    __elements = cc().get_elements(id_component)
+@route("/components")
+@route("/components/<action>")
+@route("/components/<action>/<id_component>")
+@view("components_template")
+def components(action="view", id_component=None):
+    """Method will handle the component's behaviour."""
+    component_controller = cc(action)
+    component_controller.evaluate(id_component)
 
-    elements_controller = ec(actions.VIEW)
+    return dict(action=action, data_e=component_controller.data, cols=6)
+
+
+@route("/components/<action>/<id_component>", method='POST')
+def components_action(action, id_component):
+    """Method will handle the component's behaviour."""
+    print "component_controller", id_component
+    component_controller = cc(action)
+    component_controller.evaluate(id_component, request)
+
+    return component_controller.response
+
+
+@route("/components/<id_component>/elements/<action>")
+@view("elements_template")
+def component_elements(id_component, action=actions.VIEW):
+    """Component elements."""
+    __elements = cc(action).get_elements(id_component)
+
+    elements_controller = ec(action)
     elements_controller.evaluate_elements()
     __data = elements_controller.data
     __data.elements = __elements
+
+    print __data
 
     return dict(action=actions.VIEW, data_e=__data, cols=12)
 
@@ -152,4 +176,4 @@ def css_loader(file_name):
     return static_file(file_name, root='./styles')
 
 
-run(host='localhost', port=1990, debug=True, reloader=True)
+run(host='localhost', port=1998, debug=True, reloader=True)
