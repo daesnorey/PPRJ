@@ -15,10 +15,12 @@ class  ComponentsService(object):
     def __init__(self):
         self.__db = Oracle()
 
-    def get_components(self, filters={}):
+    def get_components(self, filters=None):
         """
         get components in DB with the filters
         """
+        if not filters:
+            filters = {}
         __query = self.__db.get_query("COMPONENTS", conditions=filters)
         response = self.__db.execute(__query, filters, True).fetchall()
         return response
@@ -30,6 +32,14 @@ class  ComponentsService(object):
         response = self.__db.save("COMPONENTS", component, Component.ID)
         return response
 
+    def delete_component(self, id_component):
+        """
+        delete an element with a given id if id_component is None then
+        it will return an error
+        """
+        response = self.__db.delete("COMPONENTS", Component.ID, id_component)
+        return response
+
     def get_elements(self, id_component):
         """get_elements method
         @param id_component
@@ -37,9 +47,12 @@ class  ComponentsService(object):
         """
 
         filters = {}
-        __conditions = {Component.ID:id_component}
-        __join_fields = [Element.ID]
-        __query = self.__db.get_join_select(filters, __conditions, __join_fields, "COMPONENT_ELEMENTS", "ELEMENTS")
+        __conditions = {Component.ID: id_component}
+        print "__conditions", __conditions
+        __join_fields = [[Element.ID]]
+        print "__join_fields", __join_fields
+        __query = self.__db.get_join_select(filters, __conditions, __join_fields,
+                                            "COMPONENT_ELEMENTS", "ELEMENTS")
         print __query
 
         response = self.__db.execute(__query, filters, True).fetchall()
