@@ -8,6 +8,7 @@ bootstrap_cols = cols
 %if action == "view":
 <div class="col-md-{{bootstrap_cols}} mt-5">
     <a href="/models/create" class="col-md-auto btn btn-primary">Nuevo Modelo</a>
+
     <table class="table">
         <thead>
             <tr>
@@ -35,7 +36,7 @@ bootstrap_cols = cols
                     Inactivo
                 </span>
                 %end
-                
+
                 -->
             </tr>
             %end

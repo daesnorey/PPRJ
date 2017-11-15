@@ -29,7 +29,7 @@ bootstrap_cols = cols
                 </td>
                 <td>
                     <a href="/elements/edit/{{element.get_id(True)}}" class="btn btn-primary">Editar</a>
-                    <a href="javascript:void(0)" data-link="/elements/delete/{{element.get_id(True)}}" class="btn btn-danger" onclick="send(this)">Eliminar</a>
+                    <a href="javascript:void(0)" data-link="/elements/delete/{{element.get_id(True)}}" data-btn="delete_element" class="btn btn-danger">Eliminar</a>
                 </td>
                 <!--
                 %if element.is_active():

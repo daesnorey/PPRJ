@@ -8,6 +8,7 @@ from src.objects.model import Model
 from src.objects.object_extend import ObjectExt
 from src.objects.action import Action as actions
 
+
 class ModelsController(ObjectExt):
     """
     Class for manipulate the actions
@@ -24,7 +25,8 @@ class ModelsController(ObjectExt):
 
     def evaluate(self, id_model, req=None):
         """
-        Metodo que evalua la accion a realizar y ejecuta los metodos pertinentes
+        Metodo que evalua la accion a realizar y ejecuta los metodos
+        pertinentes
         """
         action = self.action
 
@@ -93,4 +95,4 @@ class ModelsController(ObjectExt):
         """
         set_data docstring
         """
-        self.data = {"models": self.models, "model":self.model}
+        self.data = {"models": self.models, "model": self.model}

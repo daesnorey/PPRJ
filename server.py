@@ -135,9 +135,7 @@ def component_elements(id_component, action=actions.VIEW):
 @route("/models/<action>/<id_model>")
 @view("models_template")
 def models(action="view", id_model=None):
-    """
-    Metodo que manejara el comportamiento de los modelos
-    """
+    """Metodo que manejara el comportamiento de los modelos."""
     model_controller = mc(action)
     model_controller.evaluate(id_model)
 

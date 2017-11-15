@@ -10,6 +10,7 @@ class ComponentsController(ObjectExt):
     """ComponentsController."""
 
     def __init__(self, action=None):
+        """Constructor."""
         super(ComponentsController, self).__init__()
         self.__cs = cs()
         self.component = Component()
@@ -97,8 +98,9 @@ class ComponentsController(ObjectExt):
         self.response = __response
 
     def get_elements(self, id_component):
-        """get_elements method
-        recover all the elements of an specific component.
+        """Metthod get_elements.
+
+        will get the elements of an specific component.
         """
         __id_component = self.decrypt(id_component)
         __elements = self.__cs.get_elements(__id_component)
