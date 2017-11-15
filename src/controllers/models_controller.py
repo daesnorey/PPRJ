@@ -14,6 +14,7 @@ class ModelsController(ObjectExt):
     """
 
     def __init__(self, action):
+        super(ModelsController, self).__init__()
         self.__ms = ms()
         self.model = Model()
         self.models = []
@@ -30,14 +31,14 @@ class ModelsController(ObjectExt):
         print action
 
         if action == actions.VIEW:
-            self.__get_models()
+            self.get_models()
         elif action == actions.EDIT:
-            self.__get_models(id_model)
+            self.get_models(id_model)
         elif action == actions.SAVE:
             self.save_model(id_model, req)
         elif action == actions.DELETE:
             self.delete_model(id_model)
-        self.__set_data()
+        self.set_data()
 
     def __get_model_by_row(self, row):
         model = Model()
@@ -46,7 +47,7 @@ class ModelsController(ObjectExt):
         model.set_active(row[2] == 1)
         return model
 
-    def __get_models(self, id_model=None):
+    def get_models(self, id_model=None):
         """
         get the models from the db
         if id_model is not None then it will filter by id
@@ -54,7 +55,7 @@ class ModelsController(ObjectExt):
         m_filter = {}
         if id_model is not None:
             m_filter["MODEL_ID"] = self.decrypt(id_model)
-        
+
         __models = self.__ms.get_models(m_filter)
         models = []
 
@@ -88,7 +89,7 @@ class ModelsController(ObjectExt):
         __response = self.__ms.delete_model(__id)
         self.response = __response
 
-    def __set_data(self):
+    def set_data(self):
         """
         set_data docstring
         """
