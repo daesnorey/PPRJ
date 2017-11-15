@@ -97,19 +97,6 @@ class ElementsController(ObjectExt):
 
         self.set_data()
 
-    def get_element_from_row(self, row):
-        """
-        extract data to a Element object from a given row
-        """
-        c_element = Element()
-        c_element.set_id(row[0])
-        c_element.set_name(row[1])
-        c_element.set_parent_id(row[2])
-        c_element.set_type_id(row[3])
-        c_element.set_active(row[4] == 1)
-        c_element.set_container(row[5] == 1)
-        return c_element
-
     def get_elements(self, id_element=None, parent=False):
         """
         get elements in db
@@ -119,7 +106,8 @@ class ElementsController(ObjectExt):
         if id_element is not None and parent is False:
             e_filter[Element.ID] = self.decrypt(id_element)
             __elements = self.__es.get_elements(e_filter)
-            self.element = self.get_element_from_row(__elements[0])
+            self.element = Element()
+            self.element.get_from_row(__elements[0])
         else:
             if parent is True:
                 e_filter[Element.PARENT] = self.decrypt(id_element)
@@ -128,7 +116,8 @@ class ElementsController(ObjectExt):
             elements = []
 
             for row in __elements:
-                c_element = self.get_element_from_row(row)
+                c_element = Element()
+                c_element.get_from_row(row)
                 elements.append(c_element)
 
             self.elements = elements
@@ -169,18 +158,6 @@ class ElementsController(ObjectExt):
         __response = self.__es.delete_element(__id)
         self.response = __response
 
-    def get_element_type_from_row(self, row):
-        """
-        get_element_type_from_row
-        """
-        c_element = ElementType()
-        c_element.set_id(row[0])
-        c_element.set_name(row[1])
-        c_element.set_tag(row[2])
-        c_element.set_data_type_id(row[3])
-        c_element.set_parent(row[4] == 1)
-        return c_element
-
     def get_element_types(self, id_type=None):
         """
         get element_types in db
@@ -190,15 +167,16 @@ class ElementsController(ObjectExt):
         if id_type is not None:
             e_filter["ELEMENT_TYPE_ID"] = self.decrypt(id_type)
             __element_type = self.__es.get_element_types(e_filter)
-            self.element_type = self.get_element_type_from_row(
-                __element_type[0])
+            self.element_type = ElementType()
+            self.element_type.get_from_row(__element_type[0])
         else:
             __element_types = self.__es.get_element_types(e_filter)
 
             element_types = []
 
             for row in __element_types:
-                __element_type = self.get_element_type_from_row(row)
+                __element_type = ElementType()
+                __element_type.get_from_row(row)
                 element_types.append(__element_type)
 
             self.element_types = element_types
@@ -238,16 +216,6 @@ class ElementsController(ObjectExt):
         __response = self.__es.delete_element_type(__id)
         self.response = __response
 
-    def get_data_type_from_row(self, row):
-        """
-        get_data_type_from_row
-        """
-        c_data_type = DataType()
-        c_data_type.set_id(row[0])
-        c_data_type.set_name(row[1])
-        c_data_type.set_table(row[2])
-        return c_data_type
-
     def get_data_types(self, id_type=None):
         """
         get data_types in db
@@ -257,13 +225,15 @@ class ElementsController(ObjectExt):
         if id_type is not None:
             e_filter["DATA_TYPE_ID"] = self.decrypt(id_type)
             __data_type = self.__es.get_data_types(e_filter)
-            self.data_type = self.get_data_type_from_row(__data_type[0])
+            self.data_type = DataType()
+            self.data_type.get_from_row(__data_type[0])
         else:
             __data_types = self.__es.get_data_types(e_filter)
             data_types = []
 
             for row in __data_types:
-                __data_type = self.get_data_type_from_row(row)
+                __data_type = DataType()
+                __data_type.get_from_row(row)
                 data_types.append(__data_type)
 
             self.data_types = data_types
