@@ -117,6 +117,17 @@ class Element(ObjectExt):
         """
         return self.__container
 
+    def get_from_row(self, row):
+        """
+        extract data to a Element object from a given row
+        """
+        self.set_id(row[0])
+        self.set_name(row[1])
+        self.set_parent_id(row[2])
+        self.set_type_id(row[3])
+        self.set_active(row[4] == 1)
+        self.set_container(row[5] == 1)
+
 
 class ElementType(ObjectExt):
     """
@@ -209,6 +220,16 @@ class ElementType(ObjectExt):
         """
         return self.__parent
 
+    def get_from_row(self, row):
+        """
+        get_from_row
+        """
+        self.set_id(row[0])
+        self.set_name(row[1])
+        self.set_tag(row[2])
+        self.set_data_type_id(row[3])
+        self.set_parent(row[4] == 1)
+
 
 class DataType(ObjectExt):
     """
@@ -270,3 +291,11 @@ class DataType(ObjectExt):
         returns a string value
         """
         return self.__table
+
+    def get_from_row(self, row):
+        """
+        get_data_type_from_row
+        """
+        self.set_id(row[0])
+        self.set_name(row[1])
+        self.set_table(row[2])
