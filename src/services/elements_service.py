@@ -15,10 +15,12 @@ class ElementsService(object):
     def __init__(self):
         self.__db = Oracle()
 
-    def get_elements(self, filters={}):
+    def get_elements(self, filters=None):
         """
         get elements in data base with filters
         """
+        if not filters:
+            filters = {}
         __query = self.__db.get_query("ELEMENTS", conditions=filters)
         response = self.__db.execute(__query, filters, True).fetchall()
         return response
@@ -37,10 +39,12 @@ class ElementsService(object):
         response = self.__db.delete("ELEMENTS", Element.ID, id_element)
         return response
 
-    def get_element_types(self, filters={}):
+    def get_element_types(self, filters=None):
         """
         get element_types in data base with filters
         """
+        if not filters:
+            filters = {}
         __query = self.__db.get_query("ELEMENT_TYPES", conditions=filters)
         response = self.__db.execute(__query, filters, True).fetchall()
         return response
@@ -54,15 +58,18 @@ class ElementsService(object):
 
     def delete_element_type(self, id_element_type):
         """
-        delete an element with a given id if id_element_type is None then I will return an error
+        delete an element with a given id if id_element_type is None then
+        it will return an error
         """
         response = self.__db.delete("ELEMENT_TYPES", "ELEMENT_TYPE_ID", id_element_type)
         return response
 
-    def get_data_types(self, filters={}):
+    def get_data_types(self, filters=None):
         """
         get data_types in data base with filters
         """
+        if not filters:
+            filters = {}
         __query = self.__db.get_query("DATA_TYPES", conditions=filters)
         response = self.__db.execute(__query, filters, True).fetchall()
         return response
