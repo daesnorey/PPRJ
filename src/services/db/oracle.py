@@ -89,23 +89,28 @@ class Oracle(object):
 
         return query
 
-    def get_join_instruction(self, fields, n_tables=1, join=[]):
+    def get_join_instruction(self, fields, n_tables=1, join=None):
         """get_instruction.
 
         This method will evaluate the action and will return the right
         instruction
         """
+        if not join:
+            join = []
         __ini = "SELECT :fields FROM :table0"
         if n_tables > 1:
-            for n in range(n_tables - 1):
-                to_join = join[n]
-                str_table = ":table" + str(n + 1)
+            for index in range(n_tables - 1):
+                to_join = join[index]
+                str_table = ":table" + str(index + 1)
                 str_join = ""
                 __ini += " INNER JOIN " + str_table
-                for x in to_join:
+                print "to_join", to_join
+                for field in to_join:
+                    print "field", field
                     if str_join:
                         str_join += " AND "
-                    str_join += str_table + "." + x + "= :table0." + x
+                    str_join += str_table + "." + field
+                    str_join += "= :table0." + field
                 __ini += " ON " + str_join
 
         __inst = ""
