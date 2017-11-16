@@ -51,6 +51,7 @@ class  ComponentsService(object):
         __fields = [__pre_tb1 + Element.ID,
                     __pre_tb1 + Element.NAME,
                     __pre_tb1 + Element.CONTAINER,
+                    __pre_tb1 + Element.TYPE,
                     __pre_tb0 + "SORT"]
         filters = {Component.ID: id_component, Element.ACTIVE: 1}
         __join_fields = [[Element.ID]]
@@ -65,6 +66,7 @@ class  ComponentsService(object):
             __element.set_id(row[0])
             __element.set_name(row[1])
             __element.set_container(row[2])
+            __element.set_type_id(row[3])
             elements.append(__element)
 
         return elements

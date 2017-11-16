@@ -6,7 +6,7 @@ bootstrap_cols = cols
 %>
 
 %if action == "view":
-<div class="col-md-{{bootstrap_cols}} mt-5">
+<div id="view" class="col-md-{{bootstrap_cols}} mt-5">
     <a href="/elements/create" class="col-md-auto btn btn-primary">Nuevo Elemento</a>
     <table class="table">
         <thead>
@@ -83,5 +83,8 @@ bootstrap_cols = cols
             <a class="col-md-auto btn btn-danger" href="javascript:void(0)" onclick="window.history.back();">Volver</a>
         </div>
     </form>
+</div>
+<div id="content" class="col-md-{{bootstrap_cols}} mt-5">
+
 </div>
 %end

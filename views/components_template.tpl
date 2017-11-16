@@ -58,4 +58,7 @@ bootstrap_cols = cols
         </div>
     </form>
 </div>
+<div id="content" class="col-md-{{bootstrap_cols}} mt-5">
+
+</div>
 %end
