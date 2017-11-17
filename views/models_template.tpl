@@ -26,18 +26,6 @@ bootstrap_cols = cols
                     <a href="/models/edit/{{model.get_id(True)}}" class="btn btn-primary">Editar</a>
                     <a href="javascript:void(0)" data-link="/models/delete/{{model.get_id(True)}}" data-btn="delete_model" class="btn btn-danger">Eliminar</a>
                 </td>
-                <!--
-                %if model.is_active():
-                <span class="badge badge-primary">
-                    Activo
-                </span>
-                %else:
-                <span class="badge badge-danger">
-                    Inactivo
-                </span>
-                %end
-
-                -->
             </tr>
             %end
         </tbody>

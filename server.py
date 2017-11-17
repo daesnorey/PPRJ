@@ -144,7 +144,7 @@ def component_elements_action(id_component, action):
 @route("/models/<action>")
 @route("/models/<action>/<id_model>")
 @view("models_template")
-def models(action="view", id_model=None):
+def models(action=actions.VIEW, id_model=None):
     """Metodo que manejara el comportamiento de los modelos."""
     model_controller = mc(action)
     model_controller.evaluate(id_model)
@@ -157,12 +157,25 @@ def models(action="view", id_model=None):
 @route("/models/<action>/<id_model>", method='POST')
 def models_action(action, id_model):
     """Metodo que manejara el comportamiento de los modelos."""
-    print "models_action", id_model
+    
     model_controller = mc(action)
     model_controller.evaluate(id_model, request)
 
     return model_controller.response
 
+@route("/models/<id_model>/components/<action>")
+@view("components_template")
+def model_components(id_model, action=actions.VIEW):
+    """Model components."""
+    __components = mc(action).get_components(id_model)
+    components_controller = cc(action)
+    components_controller.evaluate(None)
+    __data = components_controller.data
+
+    __data["components"] = __components
+    print "__data", __data
+
+    return dict(action=actions.VIEW, data_e=__data, cols=12, embed=True, id_model=id_model)
 
 @route("/")
 @view("index_template")
@@ -184,4 +197,4 @@ def css_loader(file_name):
     return static_file(file_name, root='./styles')
 
 
-run(host='localhost', port=2023, debug=True, reloader=True)
+run(host='localhost', port=1991, debug=True, reloader=True)
