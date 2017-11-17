@@ -100,3 +100,12 @@ class Component(ObjectExt):
         returns a boolean value
         """
         return self.__active
+
+    def get_from_row(self, row):
+        """
+        get_from_row
+        """
+        self.set_id(row[0])
+        self.set_name(row[1])
+        self.set_generic(row[2])
+        self.set_active(row[3] == 1)
