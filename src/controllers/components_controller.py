@@ -2,8 +2,11 @@
 
 from src.objects.object_extend import ObjectExt
 from src.objects.component import Component
+from src.objects.element import Element
 from src.services.components_service import ComponentsService as cs
 from src.objects.action import Action as actions
+
+from src.controllers.elements_controller import ElementsController as ec
 
 
 class ComponentsController(ObjectExt):
@@ -18,14 +21,14 @@ class ComponentsController(ObjectExt):
         self.response = {}
         self.action = action
         self.data = {}
+        self.is_embed = False
 
-    def evaluate(self, id_component, req=None):
+    def evaluate(self, id_component, req=None, embed=False):
         """
         The action will be evaluated and the right method will be call
         """
+        self.is_embed = embed
         action = self.action
-
-        print action
 
         if action == actions.VIEW:
             self.get_components()
@@ -34,17 +37,8 @@ class ComponentsController(ObjectExt):
         elif action == actions.SAVE:
             self.save_component(id_component, req)
         elif action == actions.DELETE:
-            self.delete_component(id_component)
+            self.delete_component(id_component, req)
         self.set_data()
-
-    def get_component_from_row(self, row):
-        """get_component_from_row returns and Component object maping the data from a row"""
-        c_component = Component()
-        c_component.set_id(row[0])
-        c_component.set_name(row[1])
-        c_component.set_generic(row[2])
-        c_component.set_active(row[3] == 1)
-        return c_component
 
     def get_components(self, id_component=None):
         """get components in db
@@ -53,14 +47,16 @@ class ComponentsController(ObjectExt):
         e_filter = {}
         if id_component is not None:
             e_filter[Component.ID] = self.decrypt(id_component)
-            __elements = self.__cs.get_components(e_filter)
-            self.component = self.get_component_from_row(__elements[0])
+            __components = self.__cs.get_components(e_filter)
+            self.component = Component()
+            self.component.get_from_row(__components[0])
         else:
             __components = self.__cs.get_components(e_filter)
             components = []
 
             for row in __components:
-                c_component = self.get_component_from_row(row)
+                c_component = Component() 
+                c_component.get_from_row(row)
                 components.append(c_component)
 
             self.components = components
@@ -69,32 +65,56 @@ class ComponentsController(ObjectExt):
         """
         save_component
         """
-        __is_generic = req.forms.get("is_generic") is not None
-        __name = req.forms.get("name")
         __id = int(self.decrypt(id_component))
+        __response = {}
+        if self.is_embed:
+            __ec = ec(actions.SAVE)
+            __req_id = req.forms.get("id")
+            __req_pos = int(req.forms.get("position"))
+            __ec.evaluate_elements(__req_id, req)
+            __element_id = __ec.response["id"]
 
-        if __is_generic:
-            __is_generic = 1
+            __component_element = {}
+            __component_element[Component.ID] = __id
+            __component_element[Element.ID] = __element_id
+            __component_element["POSITION"] = __req_pos
+            __component_element["SORT"] = 99
+
+            __response = self.__cs.save_component(__component_element,
+                                                  table="COMPONENT_ELEMENTS",
+                                                  id_name="COMPONENT_ELEMENT_ID")
         else:
-            __is_generic = 0
+            __is_generic = req.forms.get("is_generic") is not None
+            __name = req.forms.get("name")
 
-        __component = {}
+            if __is_generic:
+                __is_generic = 1
+            else:
+                __is_generic = 0
 
-        __component[Component.ID] = __id
-        __component[Component.NAME] = __name
-        __component[Component.GENERIC] = __is_generic
-        __component[Component.ACTIVE] = 1
+            __component = {}
 
-        __response = self.__cs.save_component(__component)
+            __component[Component.ID] = __id
+            __component[Component.NAME] = __name
+            __component[Component.GENERIC] = __is_generic
+            __component[Component.ACTIVE] = 1
+
+            __response = self.__cs.save_component(__component)
         self.response = __response
 
-    def delete_component(self, id_component):
+    def delete_component(self, id_component, req=None):
         """
         delete_component
         """
+
         __id = int(self.decrypt(id_component))
 
-        __response = self.__cs.delete_component(__id)
+        if self.is_embed:
+            __req_id = req.forms.get("id")
+            __id_e = int(self.decrypt(__req_id))
+            __response = self.__cs.delete_component_element(__id, __id_e)
+        else:
+            __response = self.__cs.delete_component(__id)
         self.response = __response
 
     def get_elements(self, id_component):
