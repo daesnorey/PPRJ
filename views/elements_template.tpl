@@ -49,7 +49,14 @@ bootstrap_cols = cols
 %elif action == "edit" or action == "create":
 %element = data_e.get("element")
 <div class="col-md-{{bootstrap_cols}} mt-5">
-    <form action="/elements/save/{{element.get_id(True)}}" method="POST" enctype="multipart/form-data">
+    %if embed is True:
+    %form_action = "/components/" + id_component + "/elements/save"
+    %else:
+    %form_action = "/elements/save/" + element.get_id(True)
+    %end
+    <form 
+        action="{{form_action}}" method="POST" enctype="multipart/form-data">
+        <input type="hidden" id="id" name="id" value="{{element.get_id(True)}}" />
         <div class="row">
             <div class="form-group col-md">
                 <label for="name">Nombre</label>
@@ -63,6 +70,12 @@ bootstrap_cols = cols
                 <label for="type_id">Tipo</label>
                 % include('combo.tpl', value_name="id", text_name="name", items=data_e.get("element_types"), id_combo="type_id", value=element.get_type_id())
             </div>
+            %if embed is True:
+            <div class="content-form col-md">
+                <label for="type_id">Posición</label>
+                % include('combo.tpl', value_name="id", text_name="name", items=[{'id':1, 'name':'Izquierda'}, {'id':2, 'name':'Derecha'}, {'id':3, 'name':'Completa'}], id_combo="position")
+            </div>
+            %end
         </div>
         <div class="form-check">
             <label class="form-check-label">
