@@ -126,9 +126,18 @@ def component_elements(id_component, action=actions.VIEW):
     print "__data", __data
     __data["elements"] = __elements
 
-    print __data
+    print __data, action
 
-    return dict(action=actions.VIEW, data_e=__data, cols=12, embed=True, id_component=id_component)
+    return dict(action=action, data_e=__data, cols=12, embed=True, id_component=id_component)
+
+
+@route("/components/<id_component>/elements/<action>", method='POST')
+def component_elements_action(id_component, action):
+    """Method component_elements_action."""
+
+    components_controller = cc(action)
+    components_controller.evaluate(id_component, request, True)
+    return components_controller.response
 
 
 @route("/models")
@@ -175,4 +184,4 @@ def css_loader(file_name):
     return static_file(file_name, root='./styles')
 
 
-run(host='localhost', port=2011, debug=True, reloader=True)
+run(host='localhost', port=2023, debug=True, reloader=True)
