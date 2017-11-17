@@ -149,6 +149,9 @@ class Oracle(object):
         __inst = self.get_instruction(action, fields)
         __inst += self.get_conditions(action, conditions)
 
+        if action == 0:
+            __inst += " returning :return_id INTO :new_id"
+
         query = __inst.replace(":table", table)
 
         return query
@@ -228,6 +231,7 @@ class Oracle(object):
         response = {}
 
         try:
+            response = dict(error=0, text="success")
             if id_object > 0:
                 print "Update"
                 __condition = {name_id: id_object}
@@ -237,36 +241,39 @@ class Oracle(object):
                 self.execute(__update_query, generic_object, True)
             else:
                 print "Insert"
+                newest_id_wrapper = self.__cursor.var(cx_Oracle.NUMBER)
                 __insert_query = self.get_query(table, fields=__fields,
                                                 action=0)
+                __fields["new_id"] = newest_id_wrapper
+                __insert_query = __insert_query.replace(":return_id", name_id)
                 print __insert_query
                 self.execute(__insert_query, __fields, True)
-            response = dict(error=0, text="success")
+                new_id = newest_id_wrapper.getvalue()
+                response["id"] = int(new_id)
         except Exception as e:
             print e
             response = dict(error=0001, text="There was an error saving")
 
         return response
 
-    def delete(self, table, name_id, id_object):
+    def delete(self, table, conditions):
         """Method delete.
 
         @attribute table
         @attribute name_id
         @attribute id_object
         """
-        if not id_object:
+        condition_size = len(conditions)
+        if condition_size == 0:
             return dict(error=0002, text="Data incomplete at delete")
 
-        __conditions = {name_id: id_object}
-
-        __delete_query = self.get_query(table, conditions=__conditions,
+        __delete_query = self.get_query(table, conditions=conditions,
                                         action=3)
 
         response = {}
 
         try:
-            self.execute(__delete_query, __conditions, True)
+            self.execute(__delete_query, conditions, True)
             response = dict(error=0, text="success")
         except Exception:
             response = dict(error=0002, text="There was an error deleting")
