@@ -2,12 +2,15 @@
 
 <%
 setdefault('cols', str(12))
+setdefault('embed', False)
 bootstrap_cols = cols
 %>
 
 %if action == "view":
 <div id="view" class="col-md-{{bootstrap_cols}} mt-5">
+    %if embed is False:
     <a href="/elements/create" class="col-md-auto btn btn-primary">Nuevo Elemento</a>
+    %end
     <table class="table">
         <thead>
             <tr>
@@ -28,29 +31,20 @@ bootstrap_cols = cols
                     % include('combo.tpl', value_name="id", text_name="name", items=data_e.get("element_types"), id_combo="typeId", value=element.get_type_id(), disabled=True, cols=12)
                 </td>
                 <td>
+                    %if embed is False:
                     <a href="/elements/edit/{{element.get_id(True)}}" class="btn btn-primary">Editar</a>
                     <a href="javascript:void(0)" data-link="/elements/delete/{{element.get_id(True)}}" data-btn="delete_element" class="btn btn-danger">Eliminar</a>
+                    %else:
+                    <a href="javascript:void(0)" data-link="/components/{{id_component}}/elements/delete" data-id="{{element.get_id(True)}}" data-btn="delete_element" class="btn btn-danger">X</a>
+                    %end
                 </td>
-                <!--
-                %if element.is_active():
-                <span class="badge badge-primary">
-                    Activo
-                </span>
-                %else:
-                <span class="badge badge-danger">
-                    Inactivo
-                </span>
-                %end
-                %if element.is_container():
-                <span class="badge badge-light">
-                    Contenedor
-                </span>
-                %end
-                -->
             </tr>
             %end
         </tbody>
     </table>
+    %if embed is True:
+    <a href="/components/{{id_component}}/elements/create" class="col-md-auto btn btn-primary">Agregar Elemento</a>
+    %end
 </div>
 %elif action == "edit" or action == "create":
 %element = data_e.get("element")

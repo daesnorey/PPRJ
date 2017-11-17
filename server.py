@@ -128,7 +128,7 @@ def component_elements(id_component, action=actions.VIEW):
 
     print __data
 
-    return dict(action=actions.VIEW, data_e=__data, cols=12)
+    return dict(action=actions.VIEW, data_e=__data, cols=12, embed=True, id_component=id_component)
 
 
 @route("/models")
@@ -175,4 +175,4 @@ def css_loader(file_name):
     return static_file(file_name, root='./styles')
 
 
-run(host='localhost', port=2010, debug=True, reloader=True)
+run(host='localhost', port=2011, debug=True, reloader=True)
