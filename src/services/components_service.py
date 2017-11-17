@@ -23,11 +23,15 @@ class  ComponentsService(object):
         response = self.__db.execute(__query, filters, True).fetchall()
         return response
 
-    def save_component(self, component):
+    def save_component(self, component, table=None, id_name=None):
         """
         save_component
         """
-        response = self.__db.save("COMPONENTS", component, Component.ID)
+        if not table:
+            table = "COMPONENTS"
+        if not id_name:
+            id_name = Component.ID
+        response = self.__db.save(table, component, id_name)
         return response
 
     def delete_component(self, id_component):
@@ -35,7 +39,7 @@ class  ComponentsService(object):
         delete an element with a given id if id_component is None then
         it will return an error
         """
-        response = self.__db.delete("COMPONENTS", Component.ID, id_component)
+        response = self.__db.delete("COMPONENTS", {Component.ID: id_component})
         return response
 
     def get_elements(self, id_component):
@@ -70,3 +74,9 @@ class  ComponentsService(object):
             elements.append(__element)
 
         return elements
+
+    def delete_component_element(self, id_component, id_element):
+        """Method delete_component_element."""
+        response = self.__db.delete("COMPONENT_ELEMENTS", {Component.ID:id_component,
+                                                           Element.ID:id_element})
+        return response
