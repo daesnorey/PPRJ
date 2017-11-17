@@ -225,9 +225,12 @@ class Oracle(object):
         @attribute name_id
         """
         __fields = copy.copy(generic_object)
-        del __fields[name_id]
+        if name_id in __fields:
+            del __fields[name_id]
+            id_object = generic_object[name_id]
+        else:
+            id_object = -1
 
-        id_object = generic_object[name_id]
         response = {}
 
         try:
@@ -241,7 +244,7 @@ class Oracle(object):
                 self.execute(__update_query, generic_object, True)
             else:
                 print "Insert"
-                newest_id_wrapper = self.__cursor.var(cx_Oracle.NUMBER)
+                newest_id_wrapper = self.get_cursor().var(cx_Oracle.NUMBER)
                 __insert_query = self.get_query(table, fields=__fields,
                                                 action=0)
                 __fields["new_id"] = newest_id_wrapper
