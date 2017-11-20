@@ -91,6 +91,14 @@ class ModelsController(ObjectExt):
         __response = self.__ms.delete_model(__id)
         self.response = __response
 
+    def get_components(self, id_model):
+        """
+        Method get_components get the components of an specific model.
+        """
+        __id_model = self.decrypt(id_model)
+        __components = self.__ms.get_components(__id_model)
+        return __components
+   
     def set_data(self):
         """
         set_data docstring

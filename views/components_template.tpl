@@ -2,6 +2,7 @@
 
 <%
 setdefault('cols', str(12))
+setdefault('embed', False)
 bootstrap_cols = cols
 %>
 
@@ -33,11 +34,20 @@ bootstrap_cols = cols
             %end
         </tbody>
     </table>
+    %if embed is True:
+    <a href="/models/{{id_model}}/components/create" class="col-md-auto btn btn-primary">Agregar Componente</a>
+    %end
 </div>
 %elif action == "edit" or action == "create":
 %component = data_e.get("component")
 <div class="col-md-{{bootstrap_cols}} mt-5">
-    <form action="/components/save/{{component.get_id(True)}}" method="POST" enctype="multipart/form-data">
+    %if embed is True:
+    %form_action = "/models/" + id_model + "/components/save"
+    %else:
+    %form_action = "/components/save/" + component.get_id(True)
+    %end
+    <form action="{{form_action}}" method="POST" enctype="multipart/form-data">
+        <!--<input type="hidden" id="id" name="id" value="{{component.get_id(True)}}" />-->
         <div class="row">
             <div class="form-group col-md">
                 <label for="name">Nombre</label>
