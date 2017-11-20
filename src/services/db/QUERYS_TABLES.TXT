@@ -90,6 +90,10 @@ CREATE TABLE "COMPONENTS"
     CONSTRAINT "COMPONENTS_CK1" CHECK (IS_GENERIC IN (1,0)) ENABLE,
     CONSTRAINT "COMPONENTS_CK2" CHECK (IS_ACTIVE IN (1,0)) ENABLE
   ) ;
+/
+
+CREATE SEQUENCE "COMPONENTS_SEQ"
+/
 
   CREATE OR REPLACE TRIGGER  "BI_COMPONENTS"
     before insert on "COMPONENTS"
@@ -113,7 +117,10 @@ CREATE TABLE  "MODELS"
 	 CONSTRAINT "MODELS_PK" PRIMARY KEY ("MODEL_ID") ENABLE,
 	 CONSTRAINT "MODELS_CK1" CHECK (IS_ACTIVE IN (0,1)) ENABLE
    ) ;
+/
 
+CREATE SEQUENCE   "MODELS_SEQ"
+/
   CREATE OR REPLACE TRIGGER  "BI_MODELS"
     before insert on "MODELS"
     for each row
@@ -151,9 +158,9 @@ begin
 end;
 /   
 
-ALTER TABLE "COMPONENT_ELEMENTS" ADD CONSTRAINT "COMPONENT_ELEMENTS_FK" 
-FOREIGN KEY ("COMPONENT_ID")
-REFERENCES "COMPONENTS" ("COMPONENT_ID")
+  ALTER TABLE "COMPONENT_ELEMENTS" ADD CONSTRAINT "COMPONENT_ELEMENTS_FK" 
+  FOREIGN KEY ("COMPONENT_ID")
+  REFERENCES "COMPONENTS" ("COMPONENT_ID")
 
 /
 ALTER TABLE "COMPONENT_ELEMENTS" ADD CONSTRAINT "COMPONENT_ELEMENTS_FK2" 
@@ -168,4 +175,45 @@ check (POSITION IN(1,2,3))
 alter table "COMPONENT_ELEMENTS" add
 constraint "COMPONENT_ELEMENTS_UK1" 
 unique ("COMPONENT_ID","ELEMENT_ID")
+/   
+
+------------------------------------------------------------------------------------------------------------------
+MODEL_COMPONENTS--------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+CREATE table "MODEL_COMPONENTS" (
+    "MODEL_COMPONENT_ID" NUMBER(10,0),
+    "MODEL_ID"           NUMBER(5,0),
+    "COMPONENT_ID"       NUMBER(5,0),
+    "SORT"               NUMBER(2,0),
+    constraint  "MODEL_COMPONENTS_PK" primary key ("MODEL_COMPONENT_ID")
+)
+/
+
+CREATE sequence "MODEL_COMPONENTS_SEQ" 
+/
+
+CREATE trigger "BI_MODEL_COMPONENTS"  
+  before insert on "MODEL_COMPONENTS"              
+  for each row 
+begin  
+  if :NEW."MODEL_COMPONENT_ID" is null then
+    select "MODEL_COMPONENTS_SEQ".nextval into :NEW."MODEL_COMPONENT_ID" from dual;
+  end if;
+end;
+/   
+
+ALTER TABLE "MODEL_COMPONENTS" ADD CONSTRAINT "MODEL_COMPONENTS_FK" 
+FOREIGN KEY ("MODEL_ID")
+REFERENCES "MODELS" ("MODEL_ID")
+
+/
+ALTER TABLE "MODEL_COMPONENTS" ADD CONSTRAINT "MODEL_COMPONENTS_FK2" 
+FOREIGN KEY ("COMPONENT_ID")
+REFERENCES "COMPONENTS" ("COMPONENT_ID")
+
+/
+alter table "MODEL_COMPONENTS" add
+constraint "MODEL_COMPONENTS_UK1" 
+unique ("COMPONENT_ID","MODEL_ID")
 /   
