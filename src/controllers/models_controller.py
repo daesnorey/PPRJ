@@ -95,10 +95,13 @@ class ModelsController(ObjectExt):
         """
         Method get_components get the components of an specific model.
         """
-        __id_model = self.decrypt(id_model)
-        __components = self.__ms.get_components(__id_model)
-        return __components
-   
+        if self.action == actions.VIEW:
+            __id_model = self.decrypt(id_model)
+            __components = self.__ms.get_components(__id_model)
+            return __components
+        else:
+            return None
+
     def set_data(self):
         """
         set_data docstring

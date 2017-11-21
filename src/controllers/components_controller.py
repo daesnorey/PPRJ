@@ -51,11 +51,13 @@ class ComponentsController(ObjectExt):
             self.component = Component()
             self.component.get_from_row(__components[0])
         else:
+            if self.is_embed:
+                e_filter[Component.GENERIC] = '1'
             __components = self.__cs.get_components(e_filter)
             components = []
 
             for row in __components:
-                c_component = Component() 
+                c_component = Component()
                 c_component.get_from_row(row)
                 components.append(c_component)
 

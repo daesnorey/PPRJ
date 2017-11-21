@@ -157,7 +157,7 @@ def models(action=actions.VIEW, id_model=None):
 @route("/models/<action>/<id_model>", method='POST')
 def models_action(action, id_model):
     """Metodo que manejara el comportamiento de los modelos."""
-    
+
     model_controller = mc(action)
     model_controller.evaluate(id_model, request)
 
@@ -168,14 +168,16 @@ def models_action(action, id_model):
 def model_components(id_model, action=actions.VIEW):
     """Model components."""
     __components = mc(action).get_components(id_model)
+
     components_controller = cc(action)
-    components_controller.evaluate(None)
+    components_controller.evaluate(id_component=None, embed=True)
     __data = components_controller.data
 
-    __data["components"] = __components
+    if __components is not None:
+        __data["components"] = __components
     print "__data", __data
 
-    return dict(action=actions.VIEW, data_e=__data, cols=12, embed=True, id_model=id_model)
+    return dict(action=action, data_e=__data, cols=12, embed=True, id_model=id_model)
 
 @route("/")
 @view("index_template")

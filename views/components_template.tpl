@@ -8,7 +8,9 @@ bootstrap_cols = cols
 
 %if action == "view":
 <div class="col-md-{{bootstrap_cols}} mt-5">
-    <a href="/components/create" class="col-md-auto btn btn-primary">Nuevo Componente</a>
+    %if embed is False:
+        <a href="/components/create" class="col-md-auto btn btn-primary">Nuevo Componente</a>
+    %end
     <table class="table">
         <thead>
             <tr>
@@ -48,6 +50,8 @@ bootstrap_cols = cols
     %end
     <form action="{{form_action}}" method="POST" enctype="multipart/form-data">
         <!--<input type="hidden" id="id" name="id" value="{{component.get_id(True)}}" />-->
+        %if embed is True:
+        %end
         <div class="row">
             <div class="form-group col-md">
                 <label for="name">Nombre</label>
@@ -59,7 +63,7 @@ bootstrap_cols = cols
                 <input class="form-check-input" type="checkbox"
                     id="is_generic" name="is_generic" value="it_is"
                     {{!'checked="checked"' if component.is_generic() else ''}} />
-                Contenedor
+                Generico
             </label>
         </div>
         <div class="form-group">
