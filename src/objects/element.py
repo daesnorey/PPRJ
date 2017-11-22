@@ -122,7 +122,7 @@ class Element(ObjectExt):
         extract data to a Element object from a given row
         """
         self.set_id(row[0])
-        self.set_name(row[1])
+        self.set_name(row[1].strip())
         self.set_parent_id(row[2])
         self.set_type_id(row[3])
         self.set_active(row[4] == 1)
@@ -138,6 +138,12 @@ class ElementType(ObjectExt):
     @attribute data_type_id
     @attribute parent
     """
+
+    ID = "ELEMENT_TYPE_ID"
+    NAME = "ELEMENT_TYPE_NAME"
+    TAG = "ELEMENT_TAG"
+    DATA_TYPE = "DATA_TYPE_ID"
+    PARENT = "IS_PARENT"
 
     def __init__(self):
         """
@@ -225,8 +231,8 @@ class ElementType(ObjectExt):
         get_from_row
         """
         self.set_id(row[0])
-        self.set_name(row[1])
-        self.set_tag(row[2])
+        self.set_name(row[1].strip())
+        self.set_tag(row[2].strip())
         self.set_data_type_id(row[3])
         self.set_parent(row[4] == 1)
 
@@ -238,6 +244,10 @@ class DataType(ObjectExt):
     @attribute name
     @attribute table
     """
+
+    ID = "DATA_TYPE_ID"
+    NAME = "DATA_TYPE_NAME"
+    TABLE = "TABLE_ELEMENT"
 
     def __init__(self):
         """
@@ -297,5 +307,5 @@ class DataType(ObjectExt):
         get_data_type_from_row
         """
         self.set_id(row[0])
-        self.set_name(row[1])
-        self.set_table(row[2])
+        self.set_name(row[1].strip())
+        self.set_table(row[2].strip())
