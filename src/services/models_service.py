@@ -29,11 +29,15 @@ class ModelsService(object):
         print ("msResponse", response)
         return response
 
-    def save_model(self, model):
+    def save_model(self, model, table=None, id_name=None):
         """
         save_model
         """
-        response = self.__db.save("MODELS", model, Model.ID)
+        if not table:
+            table = "MODELS"
+        if not id_name:
+            id_name = Model.ID
+        response = self.__db.save(table, model, id_name)
         return response
 
     def delete_model(self, id_model):
