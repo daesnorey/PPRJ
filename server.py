@@ -179,6 +179,14 @@ def model_components(id_model, action=actions.VIEW):
 
     return dict(action=action, data_e=__data, cols=12, embed=True, id_model=id_model)
 
+@route("/models/<id_model>/components/<action>", method='POST')
+def model_components_action(id_model, action):
+    """Method model_components_action."""
+
+    models_controller = mc(action)
+    models_controller.evaluate(id_model, request, True)
+    return models_controller.response
+
 @route("/")
 @view("index_template")
 def index():
@@ -199,4 +207,4 @@ def css_loader(file_name):
     return static_file(file_name, root='./styles')
 
 
-run(host='localhost', port=1991, debug=True, reloader=True)
+run(host='localhost', port=1990, debug=True, reloader=True)
