@@ -5,7 +5,7 @@ controllers
 """
 
 
-from bottle import route, run, view, request, static_file
+from bottle import route, run, view, request, response, static_file
 from src.controllers.elements_controller import ElementsController as ec
 from src.controllers.components_controller import ComponentsController as cc
 from src.controllers.models_controller import ModelsController as mc
@@ -45,6 +45,7 @@ def elements_action(action, id_element):
     element_controller = ec(action)
     element_controller.evaluate_elements(id_element, request)
 
+    response.content_type = 'application / json'
     return element_controller.response
 
 
@@ -57,7 +58,7 @@ def element_types(action="view", id_type=None):
     element_controller = ec(action)
     element_controller.evaluate_element_types(id_type)
 
-    return dict(action=action, data_e=element_controller.data, cols=6)
+    return dict(action=action, data_e=element_controller.data, cols=8)
 
 
 @route("/element_types/<action>/<id_type>", method='POST')
@@ -128,7 +129,7 @@ def component_elements(id_component, action=actions.VIEW):
 
     print __data, action
 
-    return dict(action=action, data_e=__data, cols=12, embed=True, id_component=id_component)
+    return dict(action=action, data_e=__data, cols=6, embed=True, id_component=id_component)
 
 
 @route("/components/<id_component>/elements/<action>", method='POST')
