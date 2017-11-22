@@ -212,7 +212,10 @@ class Oracle(object):
         for condition in conditions:
             if __cond:
                 __cond += " AND "
-            __cond += condition + "=:" + condition
+            if conditions[condition] == "NULL":
+                __cond += condition + " IS :" + condition
+            else:
+                __cond += condition + "=:" + condition
 
         __condition += __cond
         return __condition
