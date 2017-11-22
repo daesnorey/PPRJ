@@ -49,8 +49,32 @@ bootstrap_cols = cols
     %form_action = "/components/save/" + component.get_id(True)
     %end
     <form action="{{form_action}}" method="POST" enctype="multipart/form-data">
-        <!--<input type="hidden" id="id" name="id" value="{{component.get_id(True)}}" />-->
+        <input type="hidden" id="id" name="id" value="{{component.get_id(True)}}" />
         %if embed is True:
+        <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Generico</th>
+                <th>Accion</th>
+            </tr>
+        </thead>
+        <tbody>
+            %for componentG in data_e.get("components"):
+            <tr>
+                <td>
+                    {{componentG.get_name()}}
+                </td>
+                <td>
+                    <input type="checkbox" class="form-check-input" {{!'checked="checked"' if componentG.is_generic() else ''}} disabled="disabled" />
+                </td>
+                <td>
+                    <a href="javascript:void(0)" data-link="/models/{{id_model}}/components/add" data-id="{{componentG.get_id(True)}}" data-btn="add_component" class="btn">Agregar</a>
+                </td>
+            </tr>
+            %end
+        </tbody>
+        </table>
         %end
         <div class="row">
             <div class="form-group col-md">
