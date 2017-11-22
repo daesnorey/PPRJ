@@ -56,7 +56,7 @@
         if( ajax ) {
             sendAjax( form );
         } else {
-            from.submit();
+            form.submit();
         }
     }
 
