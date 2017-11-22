@@ -5,7 +5,7 @@ the crud operation for elements, element_types and data_types
 """
 
 from src.services.db.oracle import Oracle
-from src.objects.element import Element
+from src.objects.element import Element, ElementType, DataType
 
 class ElementsService(object):
     """
@@ -36,7 +36,7 @@ class ElementsService(object):
         """
         delete an element with a given id if id_element is None then I will return an error
         """
-        response = self.__db.delete("ELEMENTS", Element.ID, id_element)
+        response = self.__db.delete("ELEMENTS", {Element.ID: id_element})
         return response
 
     def get_element_types(self, filters=None):
@@ -53,7 +53,7 @@ class ElementsService(object):
         """
         save_element_type
         """
-        response = self.__db.save("ELEMENT_TYPES", element_type, "ELEMENT_TYPE_ID")
+        response = self.__db.save("ELEMENT_TYPES", element_type, ElementType.ID)
         return response
 
     def delete_element_type(self, id_element_type):
@@ -61,7 +61,7 @@ class ElementsService(object):
         delete an element with a given id if id_element_type is None then
         it will return an error
         """
-        response = self.__db.delete("ELEMENT_TYPES", "ELEMENT_TYPE_ID", id_element_type)
+        response = self.__db.delete("ELEMENT_TYPES", {ElementType.ID: id_element_type})
         return response
 
     def get_data_types(self, filters=None):
@@ -78,7 +78,7 @@ class ElementsService(object):
         """
         save_data_type
         """
-        response = self.__db.save("DATA_TYPES", data_type, "DATA_TYPE_ID")
+        response = self.__db.save("DATA_TYPES", data_type, DataType.ID)
         return response
 
 
@@ -86,5 +86,5 @@ class ElementsService(object):
         """
         delete an element with a given id if id_data_type is None then I will return an error
         """
-        response = self.__db.delete("DATA_TYPES", "DATA_TYPE_ID", id_data_type)
+        response = self.__db.delete("DATA_TYPES", {DataType.ID: id_data_type})
         return response
