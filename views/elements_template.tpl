@@ -1,4 +1,3 @@
-% rebase('page.tpl', title='Elementos')
 
 <%
 setdefault('cols', str(12))
@@ -7,9 +6,10 @@ bootstrap_cols = cols
 %>
 
 %if action == "view":
+% rebase('parametrization.tpl', title='Elementos')
 <div id="view" class="col-md-{{bootstrap_cols}} mt-5">
     %if embed is False:
-    <a href="/elements/create" class="col-md-auto btn btn-primary">Nuevo Elemento</a>
+    <a href="javascript:void(0)" data-link="/elements/create#e_action" data-method="GET" class="col-md-auto btn btn-primary" data-btn="create_element">Nuevo Elemento</a>
     %end
     <table class="table">
         <thead>
@@ -32,10 +32,10 @@ bootstrap_cols = cols
                 </td>
                 <td>
                     %if embed is False:
-                    <a href="/elements/edit/{{element.get_id(True)}}" class="btn btn-primary">Editar</a>
-                    <a href="javascript:void(0)" data-link="/elements/delete/{{element.get_id(True)}}" data-btn="delete_element" class="btn btn-danger">Eliminar</a>
+                    <a href="javascript:void(0)" data-link="/elements/edit/{{element.get_id(True)}}" data-btn="edit_element" data-method="GET" data-reload="/elements #view" class="btn btn-primary">Editar</a>
+                    <a href="javascript:void(0)" data-link="/elements/delete/{{element.get_id(True)}}" data-btn="delete_element" data-reload="/elements #view" class="btn btn-danger">Eliminar</a>
                     %else:
-                    <a href="javascript:void(0)" data-link="/components/{{id_component}}/elements/delete" data-id="{{element.get_id(True)}}" data-btn="delete_element" class="btn btn-danger">X</a>
+                    <a href="javascript:void(0)" data-link="/components/{{id_component}}/elements/delete" data-id="{{element.get_id(True)}}" data-btn="delete_element" data-reload="/components/{{id_component}}/elements/view #view" class="btn btn-danger">X</a>
                     %end
                 </td>
             </tr>
@@ -43,19 +43,23 @@ bootstrap_cols = cols
         </tbody>
     </table>
     %if embed is True:
-    <a href="/components/{{id_component}}/elements/create" class="col-md-auto btn btn-primary">Agregar Elemento</a>
+    <a href="javascript:void(0)" data-link="/components/{{id_component}}/elements/create" data-btn="create_element" data-method="GET" data-reload="/components/{{id_component}}/elements/view" class="col-md-auto btn btn-primary">Agregar Elemento</a>
     %end
 </div>
 %elif action == "edit" or action == "create":
 %element = data_e.get("element")
-<div class="col-md-{{bootstrap_cols}} mt-5">
+<div id="e_action" class="col-md-{{bootstrap_cols}} mt-5">
     %if embed is True:
     %form_action = "/components/" + id_component + "/elements/save"
+    %reload = "/components/" + id_component + "/elements/view #view"
     %else:
     %form_action = "/elements/save/" + element.get_id(True)
+    %reload = "/elements #view"    
     %end
     <form 
-        action="{{form_action}}" method="POST" enctype="multipart/form-data">
+        action="{{form_action}}" method="POST" enctype="multipart/form-data"
+        data-form="element_form"
+        data-reload="{{reload}}">
         <input type="hidden" id="id" name="id" value="{{element.get_id(True)}}" />
         <div class="row">
             <div class="form-group col-md">

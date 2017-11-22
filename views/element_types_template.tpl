@@ -1,13 +1,12 @@
-% rebase('page.tpl', title='Tipos de elementos')
-
 <%
 setdefault('cols', str(12))
 bootstrap_cols = cols
 %>
 
 %if action == "view":
-<div class="col-md-{{bootstrap_cols}} mt-5">
-    <a href="/element_types/create" class="col-md-auto btn btn-primary">Nuevo Tipo</a>
+% rebase('parametrization.tpl', title='Tipos de elementos')
+<div id="view" class="col-md-{{bootstrap_cols}} mt-5">
+    <a href="javascript:void(0)" data-link="/element_types/create" data-method="GET" data-btn="create_element_type" class="col-md-auto btn btn-primary">Nuevo Tipo</a>
     <table class="table">
         <thead>
             <tr>
@@ -30,8 +29,8 @@ bootstrap_cols = cols
                     % include('combo.tpl', value_name="id", text_name="name", items=data_e.get("data_types"), id_combo="data_type_id", value=element_type.get_data_type_id(), disabled=True, cols=12)
                 </td>
                 <td>
-                    <a href="/element_types/edit/{{element_type.get_id(True)}}" class="btn btn-primary">Editar</a>
-                    <a href="javascript:void(0)" data-link="/element_types/delete/{{element_type.get_id(True)}}" data-btn="delete_element" class="btn btn-danger">Eliminar</a>
+                    <a href="javascript:void(0)" data-link="/element_types/edit/{{element_type.get_id(True)}}" data-btn="edit_element" data-method="GET" data-reload="/element_types #view" class="btn btn-primary">Editar</a>
+                    <a href="javascript:void(0)" data-link="/element_types/delete/{{element_type.get_id(True)}}" data-btn="delete_element" data-reload="/element_types #view" class="btn btn-danger">Eliminar</a>
                 </td>
             </tr>
             %end
@@ -41,7 +40,10 @@ bootstrap_cols = cols
 %elif action == "edit" or action == "create":
 %element_type = data_e.get("element_type")
 <div class="col-md-{{bootstrap_cols}} mt-5">
-    <form action="/element_types/save/{{element_type.get_id(True)}}" method="POST" enctype="multipart/form-data">
+    <form 
+        action="/element_types/save/{{element_type.get_id(True)}}" method="POST" enctype="multipart/form-data"
+        data-form="element_type_form"
+        data-reload="/element_types #view">
         <div class="row">
             <div class="form-group col-md">
                 <label for="name">Nombre</label>

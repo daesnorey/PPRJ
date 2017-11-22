@@ -1,5 +1,3 @@
-% rebase('page.tpl', title='Tipos de dato')
-
 <%
 setdefault('cols', str(12))
 bootstrap_cols = cols
@@ -7,8 +5,9 @@ combo_tablas = [{"id":"NUMBER","name":"Número"}, {"id":"TEXT","name":"Texto"}]
 %>
 
 %if action == "view":
-<div class="col-md-{{bootstrap_cols}} mt-5">
-    <a href="/data_types/create" class="col-md-auto btn btn-primary">Nuevo Tipo</a>
+% rebase('parametrization.tpl', title='Tipos de dato')
+<div id="view" class="col-md-{{bootstrap_cols}} mt-5">
+    <a href="javascript:void(0)" data-link="/data_types/create" data-btn="create_element_type" data-method="GET" data-reload="/data_types #view" class="col-md-auto btn btn-primary">Nuevo Tipo</a>
     <table class="table">
         <thead>
             <tr>
@@ -27,8 +26,8 @@ combo_tablas = [{"id":"NUMBER","name":"Número"}, {"id":"TEXT","name":"Texto"}]
                     % include('combo.tpl', value_name="id", text_name="name", items=combo_tablas, id_combo="table", value=data_type.get_table(), disabled=True, cols=12)
                 </td>
                 <td>
-                    <a href="/data_types/edit/{{data_type.get_id(True)}}" class="btn btn-primary">Editar</a>
-                    <a href="javascript:void(0)" data-link="/data_types/delete/{{data_type.get_id(True)}}" data-btn="delete_element" class="btn btn-danger">Eliminar</a>
+                    <a href="javascript:void(0)" data-link="/data_types/edit/{{data_type.get_id(True)}}" data-btn="edit_element_type" data-reload="/data_types #view" data-method="GET" class="btn btn-primary">Editar</a>
+                    <a href="javascript:void(0)" data-link="/data_types/delete/{{data_type.get_id(True)}}" data-btn="delete_element_type" data-reload="/data_types #view" class="btn btn-danger">Eliminar</a>
                 </td>
             </tr>
             %end
@@ -38,7 +37,10 @@ combo_tablas = [{"id":"NUMBER","name":"Número"}, {"id":"TEXT","name":"Texto"}]
 %elif action == "edit" or action == "create":
 %data_type = data_e.get("data_type")
 <div class="col-md-{{bootstrap_cols}} mt-5">
-    <form action="/data_types/save/{{data_type.get_id(True)}}" method="POST" enctype="multipart/form-data">
+    <form 
+        action="/data_types/save/{{data_type.get_id(True)}}" method="POST" enctype="multipart/form-data"
+        data-form="data_type"
+        data-reload="/data_types #view">
         <div class="row">
             <div class="form-group col-md">
                 <label for="name">Nombre</label>
