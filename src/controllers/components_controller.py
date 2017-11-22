@@ -38,6 +38,9 @@ class ComponentsController(ObjectExt):
             self.save_component(id_component, req)
         elif action == actions.DELETE:
             self.delete_component(id_component, req)
+        elif action == "create":
+            if embed is True:
+                self.get_components()
         self.set_data()
 
     def get_components(self, id_component=None):
@@ -51,9 +54,10 @@ class ComponentsController(ObjectExt):
             self.component = Component()
             self.component.get_from_row(__components[0])
         else:
-            if self.is_embed:
-                e_filter[Component.GENERIC] = '1'
-            __components = self.__cs.get_components(e_filter)
+            if self.action == "create":
+                __components = self.__cs.get_gen_components()
+            else:
+                __components = self.__cs.get_components(e_filter)
             components = []
 
             for row in __components:
@@ -69,6 +73,8 @@ class ComponentsController(ObjectExt):
         """
         __id = int(self.decrypt(id_component))
         __response = {}
+        print self.is_embed
+
         if self.is_embed:
             __ec = ec(actions.SAVE)
             __req_id = req.forms.get("id")

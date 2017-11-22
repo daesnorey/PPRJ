@@ -80,3 +80,25 @@ class  ComponentsService(object):
         response = self.__db.delete("COMPONENT_ELEMENTS", {Component.ID:id_component,
                                                            Element.ID:id_element})
         return response
+
+    def get_gen_components(self):
+        """ get_gen_components """
+
+        __tbl_0 = "COMPONENTS"
+        __tbl_1 = "MODEL_COMPONENTS"
+        __pre_tb0 = __tbl_0 + "."
+        __pre_tb1 = __tbl_1 + "."
+        __fields = [__pre_tb0 + Component.ID,
+                    __pre_tb0 + Component.NAME,
+                    __pre_tb0 + Component.GENERIC,
+                    __pre_tb1 + "SORT"]
+        filters = {Component.GENERIC: 1}###
+        __join_fields = [[Component.ID]]
+        __query = self.__db.get_join_select(__fields, filters, __join_fields,
+                                            __tbl_0, __tbl_1)
+
+        __query = __query.replace("INNER", "LEFT")###
+        print "QUERY", __query
+        response = self.__db.execute(__query, filters, True).fetchall()
+
+        return response
