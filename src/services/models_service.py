@@ -77,3 +77,10 @@ class ModelsService(object):
             components.append(__component)
 
         return components
+
+    def delete_model_component(self, id_model, id_component):
+        """Method delete_component_element."""
+        response = self.__db.delete("MODEL_COMPONENTS",
+                                    {Component.ID: id_component,
+                                     Model.ID: id_model})
+        return response
