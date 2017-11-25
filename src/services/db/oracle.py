@@ -3,9 +3,11 @@
 db_connection.py file will contain the connection behaviour
 to the database
 """
+import random
 import copy
 import cx_Oracle
 
+from src.services.db.db_types import DbTypes
 
 class Oracle(object):
     """Oracle class will handle the conection to the database."""
@@ -58,16 +60,53 @@ class Oracle(object):
 
         return self.__cursor
 
-    def execute(self, query, bindvars=None, commit=False):
+    def execute(self, query, bindvars=None, commit=False, debug=True):
         """Execute query, return cursor."""
-        response = self.get_cursor().execute(query, bindvars)
+        __noramalizate = self.normalize_query(query, bindvars)
+        __query = __noramalizate[0]
+        __bindvars = __noramalizate[1]
+        if debug:
+            print query, bindvars
+            print "*" * 10
+            print __query, __bindvars
+        response = self.get_cursor().execute(__query, __bindvars)
 
         if commit is True:
             self.__data_base.commit()
 
         return response
 
-#######################################################################
+    def normalize_query(self, query, bindvars):
+        """Method normalize_query."""
+        if not bindvars or "." not in query:
+            return [query, bindvars]
+
+        new_bindvars = {}
+
+        for key in bindvars:
+            value = bindvars[key]
+            if DbTypes.exist(value):
+                continue
+
+            if "." in key:
+                new_key = self.get_condition_key(key)
+                new_bindvars[new_key] = value
+                query = query.replace(":" + key, ":" + new_key)
+            else:
+                new_bindvars[key] = value
+
+        return [query, new_bindvars]
+
+    def get_condition_key(self, key):
+        """Method get_condition_key."""
+        dot = "."
+        new_key = ""
+        if dot in key:
+            new_key = str(random.choice('abcdefghij'))
+            new_key += str(random.randint(0, 1000))
+            new_key += key.split(dot)[1]
+        return new_key
+
     def get_join_select(self, fields=None, conditions=None,
                         join_fields=None, *table):
         """Method get_query.
@@ -131,7 +170,6 @@ class Oracle(object):
 
         response = __ini.replace(":fields", __inst)
         return response
-#######################################################################
 
     def get_query(self, table, fields=None, conditions=None, action=1):
         """Method get_query.
@@ -212,8 +250,9 @@ class Oracle(object):
         for condition in conditions:
             if __cond:
                 __cond += " AND "
-            if conditions[condition] == "NULL":
-                __cond += condition + " IS :" + condition
+
+            if DbTypes.exist(conditions[condition]):
+                __cond += condition + " " + DbTypes.get_sentence(conditions[condition])
             else:
                 __cond += condition + "=:" + condition
 
@@ -239,20 +278,17 @@ class Oracle(object):
         try:
             response = dict(error=0, text="success")
             if id_object > 0:
-                print "Update"
                 __condition = {name_id: id_object}
                 __update_query = self.get_query(table, __fields, __condition,
                                                 action=2)
                 print __update_query
                 self.execute(__update_query, generic_object, True)
             else:
-                print "Insert"
                 newest_id_wrapper = self.get_cursor().var(cx_Oracle.NUMBER)
                 __insert_query = self.get_query(table, fields=__fields,
                                                 action=0)
                 __fields["new_id"] = newest_id_wrapper
                 __insert_query = __insert_query.replace(":return_id", name_id)
-                print __insert_query
                 self.execute(__insert_query, __fields, True)
                 new_id = newest_id_wrapper.getvalue()
                 response["id"] = int(new_id)
