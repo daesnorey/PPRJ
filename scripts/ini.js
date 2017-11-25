@@ -17,6 +17,19 @@
         forms.submit( submit );
     }
 
+    function checkLoad( element ) {
+        var divs = $( element ).find( "[data-load]" );
+
+        divs.each( doLoad );
+    }
+
+    function doLoad() {
+        var element = $( this );
+        var urlToLoad = element.data( "load" );
+
+        element.load( urlToLoad, "", divLoaded );
+    }
+
     function send() {
         var self = $( this );
         var link = self.data("link");
@@ -95,7 +108,7 @@
     }
     
     function divLoaded() {
-        $( "div#main" ).checkEvents();
+        $( this ).checkEvents();
     }
 
     function errorCallback( err, xht, msj ) {
@@ -106,6 +119,7 @@
         checkEvents: function() {
             return this.each( function() {
                 setSendEvent( this );
+                checkLoad( this );
             } );
         }
     } );
