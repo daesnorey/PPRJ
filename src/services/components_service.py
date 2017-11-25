@@ -6,6 +6,7 @@ Contain the possible actions on the components
 from src.services.db.oracle import Oracle
 from src.objects.component import Component
 from src.objects.element import Element
+from src.services.db.db_types import DbTypes
 
 class  ComponentsService(object):
     """ComponentsService class."""
@@ -92,13 +93,12 @@ class  ComponentsService(object):
                     __pre_tb0 + Component.NAME,
                     __pre_tb0 + Component.GENERIC,
                     __pre_tb1 + "SORT"]
-        filters = {Component.GENERIC: 1}###
+        filters = {Component.GENERIC: 1, __pre_tb1 + Component.ID: DbTypes.NULL}
         __join_fields = [[Component.ID]]
         __query = self.__db.get_join_select(__fields, filters, __join_fields,
                                             __tbl_0, __tbl_1)
 
-        __query = __query.replace("INNER", "LEFT")###
-        print "QUERY", __query
+        __query = __query.replace("INNER", "LEFT")
         response = self.__db.execute(__query, filters, True).fetchall()
 
         return response
