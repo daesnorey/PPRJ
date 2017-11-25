@@ -217,3 +217,306 @@ alter table "MODEL_COMPONENTS" add
 constraint "MODEL_COMPONENTS_UK1" 
 unique ("COMPONENT_ID","MODEL_ID")
 /   
+
+
+------------------------------------------------------------------------------------------------------------------
+USERS-------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+CREATE table "USERS" (
+    "USER_ID"       NUMBER(5,0),
+    "NAME"          VARCHAR2(70) NOT NULL,
+    "LASTNAME"      VARCHAR2(80) NOT NULL,
+    "USERNAME"      VARCHAR2(40) NOT NULL,
+    "PASSWORD"      CHAR(21),
+    "TI"            CHAR(254) NOT NULL,
+    "TE"            CHAR(254) NOT NULL,
+    "TP"            CHAR(254),
+    "IS_ACTIVE"     NUMBER(1,0) NOT NULL,
+    "CREATION_DATE" NUMBER(8,0) NOT NULL,
+    "IS_ADMIN"      NUMBER(1,0) NOT NULL,
+    constraint  "USERS_PK" primary key ("USER_ID")
+)
+/
+
+CREATE sequence "USERS_SEQ" 
+/
+
+CREATE trigger "BI_USERS"  
+  before insert on "USERS"              
+  for each row 
+begin  
+  if :NEW."USER_ID" is null then
+    select "USERS_SEQ".nextval into :NEW."USER_ID" from dual;
+  end if;
+end;
+/   
+
+alter table "USERS" add
+constraint "USERS_UK1" 
+unique ("USERNAME")
+/   
+alter table "USERS" add
+constraint "USERS_CK1" 
+check (IS_ACTIVE IN (0,1))
+/   
+alter table "USERS" add
+constraint "USERS_CK2" 
+check (IS_ADMIN IN (0,1))
+/   
+
+------------------------------------------------------------------------------------------------------------------
+PROJECTS----------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+CREATE table "PROJECTS" (
+    "PROJECT_ID"    NUMBER(10,0),
+    "PROJECT_NAME"  VARCHAR2(50),
+    "MODEL_ID"      NUMBER(5,0),
+    "USER_ID"       NUMBER(5,0),
+    "CREATION_DATE" NUMBER(8,0),
+    constraint  "PROJECTS_PK" primary key ("PROJECT_ID")
+)
+/
+
+CREATE sequence "PROJECTS_SEQ" 
+/
+
+CREATE trigger "BI_PROJECTS"  
+  before insert on "PROJECTS"              
+  for each row 
+begin  
+  if :NEW."PROJECT_ID" is null then
+    select "PROJECTS_SEQ".nextval into :NEW."PROJECT_ID" from dual;
+  end if;
+end;
+/   
+
+ALTER TABLE "PROJECTS" ADD CONSTRAINT "PROJECTS_FK" 
+FOREIGN KEY ("MODEL_ID")
+REFERENCES "MODELS" ("MODEL_ID")
+
+/
+ALTER TABLE "PROJECTS" ADD CONSTRAINT "PROJECTS_FK2" 
+FOREIGN KEY ("USER_ID")
+REFERENCES "USERS" ("USER_ID")
+
+/
+alter table "PROJECTS" add
+constraint "PROJECTS_UK1" 
+unique ("PROJECT_NAME")
+/   
+
+------------------------------------------------------------------------------------------------------------------
+PROJECT_USERS-----------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+CREATE table "PROJECT_USERS" (
+    "PROJECT_USER_ID" NUMBER(10,0),
+    "PROJECT_ID"      NUMBER(10,0),
+    "USER_ID"         NUMBER(5,0),
+    "CAN_EDIT"        NUMBER(1,0),
+    "CAN_DELETE"      NUMBER(1,0),
+    "IS_ADMIN"        NUMBER(1,0),
+    constraint  "PROJECT_USERS_PK" primary key ("PROJECT_USER_ID")
+)
+/
+
+CREATE sequence "PROJECT_USERS_SEQ" 
+/
+
+CREATE trigger "BI_PROJECT_USERS"  
+  before insert on "PROJECT_USERS"              
+  for each row 
+begin  
+  if :NEW."PROJECT_USER_ID" is null then
+    select "PROJECT_USERS_SEQ".nextval into :NEW."PROJECT_USER_ID" from dual;
+  end if;
+end;
+/   
+
+ALTER TABLE "PROJECT_USERS" ADD CONSTRAINT "PROJECT_USERS_FK" 
+FOREIGN KEY ("PROJECT_ID")
+REFERENCES "PROJECTS" ("PROJECT_ID")
+
+/
+ALTER TABLE "PROJECT_USERS" ADD CONSTRAINT "PROJECT_USERS_FK2" 
+FOREIGN KEY ("USER_ID")
+REFERENCES "USERS" ("USER_ID")
+
+/
+alter table "PROJECT_USERS" add
+constraint "PROJECT_USERS_UK1" 
+unique ("PROJECT_ID","USER_ID")
+/   
+alter table "PROJECT_USERS" add
+constraint "PROJECT_USERS_CK1" 
+check (CAN_EDIT IN (0,1))
+/   
+alter table "PROJECT_USERS" add
+constraint "PROJECT_USERS_CK2" 
+check (CAN_DELETE IN(0,1))
+/   
+alter table "PROJECT_USERS" add
+constraint "PROJECT_USERS_CK3" 
+check (IS_ADMIN IN(0,1))
+/   
+
+------------------------------------------------------------------------------------------------------------------
+PROJECT_COMPONENTS------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+CREATE table "PROJECT_COMPONENTS" (
+    "PROJECT_COMPONENT_ID" NUMBER(15,0),
+    "PROJECT_ID"           NUMBER(10,0) NOT NULL,
+    "COMPONENT_ID"         NUMBER(5,0) NOT NULL,
+    "SORT"                 NUMBER(3,0) NOT NULL,
+    constraint  "PROJECT_COMPONENTS_PK" primary key ("PROJECT_COMPONENT_ID")
+)
+/
+
+CREATE sequence "PROJECT_COMPONENTS_SEQ" 
+/
+
+CREATE trigger "BI_PROJECT_COMPONENTS"  
+  before insert on "PROJECT_COMPONENTS"              
+  for each row 
+begin  
+  if :NEW."PROJECT_COMPONENT_ID" is null then
+    select "PROJECT_COMPONENTS_SEQ".nextval into :NEW."PROJECT_COMPONENT_ID" from dual;
+  end if;
+end;
+/   
+
+ALTER TABLE "PROJECT_COMPONENTS" ADD CONSTRAINT "PROJECT_COMPONENTS_FK2" 
+FOREIGN KEY ("PROJECT_ID")
+REFERENCES "PROJECTS" ("PROJECT_ID")
+
+/
+ALTER TABLE "PROJECT_COMPONENTS" ADD CONSTRAINT "PROJECT_COMPONENTS_FK3" 
+FOREIGN KEY ("COMPONENT_ID")
+REFERENCES "COMPONENTS" ("COMPONENT_ID")
+
+/
+alter table "PROJECT_COMPONENTS" add
+constraint "PROJECT_COMPONENTS_UK1" 
+unique ("PROJECT_ID","COMPONENT_ID")
+/   
+
+------------------------------------------------------------------------------------------------------------------
+PROJECT_ELEMENTS--------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+CREATE table "PROJECT_ELEMENTS" (
+    "PROJECT_ELEMENT_ID"   NUMBER(15,0),
+    "PROJECT_COMPONENT_ID" NUMBER(15,0) NOT NULL,
+    "ELEMENT_ID"           NUMBER(5,0) NOT NULL,
+    "POSITION"             NUMBER(1,0),
+    "SORT"                 NUMBER(3,0),
+    constraint  "PROJECT_ELEMENTS_PK" primary key ("PROJECT_ELEMENT_ID")
+)
+/
+
+CREATE sequence "PROJECT_ELEMENTS_SEQ" 
+/
+
+CREATE trigger "BI_PROJECT_ELEMENTS"  
+  before insert on "PROJECT_ELEMENTS"              
+  for each row 
+begin  
+  if :NEW."PROJECT_ELEMENT_ID" is null then
+    select "PROJECT_ELEMENTS_SEQ".nextval into :NEW."PROJECT_ELEMENT_ID" from dual;
+  end if;
+end;
+/   
+
+ALTER TABLE "PROJECT_ELEMENTS" ADD CONSTRAINT "PROJECT_ELEMENTS_FK" 
+FOREIGN KEY ("PROJECT_COMPONENT_ID")
+REFERENCES "PROJECT_COMPONENTS" ("PROJECT_COMPONENT_ID")
+
+/
+ALTER TABLE "PROJECT_ELEMENTS" ADD CONSTRAINT "PROJECT_ELEMENTS_FK2" 
+FOREIGN KEY ("ELEMENT_ID")
+REFERENCES "ELEMENTS" ("ELEMENT_ID")
+
+/
+alter table "PROJECT_ELEMENTS" add
+constraint "PROJECT_ELEMENTS_UK1" 
+unique ("PROJECT_COMPONENT_ID","ELEMENT_ID")
+/   
+alter table "PROJECT_ELEMENTS" add
+constraint "PROJECT_ELEMENTS_CK1" 
+check (POSITION IN(1,2,3))
+/   
+
+------------------------------------------------------------------------------------------------------------------
+NUMBER_PROJECT_ELEMENT--------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+CREATE table "NUMBER_PROJECT_ELEMENT" (
+    "ID"                 NUMBER(15,0),
+    "PROJECT_ELEMENT_ID" NUMBER(15,0) NOT NULL,
+    "VALUE"              VARCHAR2(3000),
+    "SORT"               NUMBER(4,0),
+    constraint  "NUMBER_PROJECT_ELEMENT_PK" primary key ("ID")
+)
+/
+
+CREATE sequence "NUMBER_PROJECT_ELEMENT_SEQ" 
+/
+
+CREATE trigger "BI_NUMBER_PROJECT_ELEMENT"  
+  before insert on "NUMBER_PROJECT_ELEMENT"              
+  for each row 
+begin  
+  if :NEW."ID" is null then
+    select "NUMBER_PROJECT_ELEMENT_SEQ".nextval into :NEW."ID" from dual;
+  end if;
+end;
+/   
+
+ALTER TABLE "NUMBER_PROJECT_ELEMENT" ADD CONSTRAINT "NUMBER_PROJECT_ELEMENT_FK" 
+FOREIGN KEY ("PROJECT_ELEMENT_ID")
+REFERENCES "PROJECT_ELEMENTS" ("PROJECT_ELEMENT_ID")
+
+/
+alter table "NUMBER_PROJECT_ELEMENT" add
+constraint "NUMBER_PROJECT_ELEMENT_UK1" 
+unique ("PROJECT_ELEMENT_ID","SORT")
+/   
+
+------------------------------------------------------------------------------------------------------------------
+NUMBER_PROJECT_ELEMENT--------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+CREATE table "TEXT_PROJECT_ELEMENT" (
+    "ID"                 NUMBER(15,0),
+    "PROJECT_ELEMENT_ID" NUMBER(15,0) NOT NULL,
+    "VALUE"              NUMBER(20,9) NOT NULL,
+    "SORT"               NUMBER(3,0) NOT NULL,
+    constraint  "TEXT_PROJECT_ELEMENT_PK" primary key ("ID")
+)
+/
+
+CREATE sequence "TEXT_PROJECT_ELEMENT_SEQ" 
+/
+
+CREATE trigger "BI_TEXT_PROJECT_ELEMENT"  
+  before insert on "TEXT_PROJECT_ELEMENT"              
+  for each row 
+begin  
+  if :NEW."ID" is null then
+    select "TEXT_PROJECT_ELEMENT_SEQ".nextval into :NEW."ID" from dual;
+  end if;
+end;
+/   
+
+ALTER TABLE "TEXT_PROJECT_ELEMENT" ADD CONSTRAINT "TEXT_PROJECT_ELEMENT_FK" 
+FOREIGN KEY ("PROJECT_ELEMENT_ID")
+REFERENCES "PROJECT_ELEMENTS" ("PROJECT_ELEMENT_ID")
+
+/
+alter table "TEXT_PROJECT_ELEMENT" add
+constraint "TEXT_PROJECT_ELEMENT_UK1" 
+unique ("PROJECT_ELEMENT_ID","SORT")
+/   
