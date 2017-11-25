@@ -42,7 +42,7 @@ class ModelsController(ObjectExt):
         elif action == actions.SAVE:
             self.save_model(id_model, req)
         elif action == actions.DELETE:
-            self.delete_model(id_model)
+            self.delete_model(id_model, req)
         elif action == "add":
             self.save_model_component(id_model, req)
         self.set_data()
@@ -103,13 +103,19 @@ class ModelsController(ObjectExt):
 
             self.response = self.__ms.save_model(__model)
 
-    def delete_model(self, id_model):
+    def delete_model(self, id_model, req=None):
         """
         delete_element
         """
         __id = int(self.decrypt(id_model))
 
-        __response = self.__ms.delete_model(__id)
+        if self.is_embed:
+            __req_id = req.forms.get("id")
+            __id_c = int(self.decrypt(__req_id))
+            __response = self.__ms.delete_model_component(__id, __id_c)
+        else:
+            __response = self.__ms.delete_model(__id)
+
         self.response = __response
 
     def get_components(self, id_model):
