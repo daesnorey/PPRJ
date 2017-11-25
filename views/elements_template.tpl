@@ -7,7 +7,7 @@ bootstrap_cols = cols
 
 %if action == "view":
 % rebase('parametrization.tpl', title='Elementos')
-<div id="view" class="col-md-{{bootstrap_cols}} mt-5">
+<div id="view" class="col-md-8 mt-5">
     %if embed is False:
     <a href="javascript:void(0)" data-link="/elements/create#e_action" data-method="GET" class="col-md-auto btn btn-primary" data-btn="create_element">Nuevo Elemento</a>
     %end
@@ -48,7 +48,7 @@ bootstrap_cols = cols
 </div>
 %elif action == "edit" or action == "create":
 %element = data_e.get("element")
-<div id="e_action" class="col-md-{{bootstrap_cols}} mt-5">
+<div id="e_action" class="col-md-4 mt-5">
     %if embed is True:
     %form_action = "/components/" + id_component + "/elements/save"
     %reload = "/components/" + id_component + "/elements/view #view"
