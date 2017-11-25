@@ -207,5 +207,9 @@ def css_loader(file_name):
     """Import css files."""
     return static_file(file_name, root='./styles')
 
+@route('/images/<file_name:path>')
+def image_loader(file_name):
+    """Get images."""
+    return static_file(file_name, root='./styles/images')
 
-run(host='localhost', port=1990, debug=True, reloader=True)
+run(host='localhost', port=1900, debug=True, reloader=True)
