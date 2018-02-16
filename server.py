@@ -1,6 +1,6 @@
 """server.py.
 
-Server web appliation, will take the requests and route them to their
+Server web application, will take the requests and route them to their
 controllers
 """
 
