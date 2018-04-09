@@ -6,7 +6,9 @@ to the database
 import random
 import copy
 import cx_Oracle
+import json
 
+from src.objects.third import Third
 from src.services.db.db_types import DbTypes
 
 class Oracle(object):
@@ -19,8 +21,8 @@ class Oracle(object):
 
     def __open(self, debug=False):
         """Connect to the database."""
-        username = 'PPRJ'
-        password = 'PPRJ123'
+        username = 'pre_dnovoa'#'PPRJ'
+        password = 'w27XYfj5'
         hostname = '127.0.0.1'
         servicename = 'XE'
         port = 1521
@@ -28,17 +30,17 @@ class Oracle(object):
         dsn_tns = cx_Oracle.makedsn(hostname, port, servicename)
 
         if debug is True:
-            print dsn_tns
+            print(dsn_tns)
 
         try:
             self.__data_base = cx_Oracle.connect(username, password, dsn_tns)
         except cx_Oracle.DatabaseError as e:
             error, = e.args
             if error.code == 1017:
-                print 'Please check your credentials.'
+                print('Please check your credentials.')
                 # sys.exit()?
             else:
-                print e
+                print(e)
 
             # Very important part!
             raise
@@ -66,9 +68,9 @@ class Oracle(object):
         __query = __noramalizate[0]
         __bindvars = __noramalizate[1]
         if debug:
-            print query, bindvars
-            print "*" * 10
-            print __query, __bindvars
+            print(query, bindvars)
+            print("*" * 10)
+            print(__query, __bindvars)
         response = self.get_cursor().execute(__query, __bindvars)
 
         if commit is True:
@@ -129,6 +131,8 @@ class Oracle(object):
         query = __inst
         for number in range(len(table)):
             str_replace = ":table" + str(number)
+            __table = table[number].replace("l__", "")
+            __table = table[number].replace("r__", "")
             query = query.replace(str_replace, table[number])
 
         return query
@@ -147,10 +151,16 @@ class Oracle(object):
                 to_join = join[index]
                 str_table = ":table" + str(index + 1)
                 str_join = ""
-                __ini += " INNER JOIN " + str_table
-                print "to_join", to_join
+                if to_join.startswith("l__"):
+                    __ini += " LEFT JOIN " 
+                elif to_join.startswith("r__"):
+                    __ini += " RIGHT JOIN "
+                else:
+                    __ini += " INNER JOIN "
+                __init += str_table
+                print("to_join", to_join)
                 for field in to_join:
-                    print "field", field
+                    print("field", field)
                     if str_join:
                         str_join += " AND "
                     str_join += str_table + "." + field
@@ -281,7 +291,7 @@ class Oracle(object):
                 __condition = {name_id: id_object}
                 __update_query = self.get_query(table, __fields, __condition,
                                                 action=2)
-                print __update_query
+                print(__update_query)
                 self.execute(__update_query, generic_object, True)
             else:
                 newest_id_wrapper = self.get_cursor().var(cx_Oracle.NUMBER)
@@ -293,8 +303,8 @@ class Oracle(object):
                 new_id = newest_id_wrapper.getvalue()
                 response["id"] = int(new_id)
         except Exception as e:
-            print e
-            response = dict(error=0001, text="There was an error saving")
+            print(e)
+            response = dict(error=1, text="There was an error saving")
 
         return response
 
@@ -307,7 +317,7 @@ class Oracle(object):
         """
         condition_size = len(conditions)
         if condition_size == 0:
-            return dict(error=0002, text="Data incomplete at delete")
+            return dict(error=2, text="Data incomplete at delete")
 
         __delete_query = self.get_query(table, conditions=conditions,
                                         action=3)
@@ -318,6 +328,47 @@ class Oracle(object):
             self.execute(__delete_query, conditions, True)
             response = dict(error=0, text="success")
         except Exception:
-            response = dict(error=0002, text="There was an error deleting")
+            response = dict(error=2, text="There was an error deleting")
 
         return response
+    
+    def search(self, **options):
+        table = options.get("table")
+
+        if not table:
+            raise Exception("fuck you")
+
+        tmp = {}
+
+        if isinstance(table, list):
+            pass
+        else:
+            query = self.get_instruction(1, {}).replace(":table", table)
+            fields = options.get("fields")
+            conditions = options.get("conditions")
+            
+            for field in fields:
+                nquery = query + " WHERE "
+
+                for condition in conditions:
+                    if len(condition.strip()) == 0:
+                        continue
+                    nquery += " LOWER({}) LIKE LOWER('%{}%') OR".format(field, condition)
+                nquery = nquery.strip("OR").strip()
+                response = self.execute(nquery, {}, debug=False)
+
+                for row in response.fetchall():
+                    id = row[0]
+                    if not tmp.get(id):
+                        tmp[id] = [row, 1]
+                    else:
+                        tmp[id][1] += 1
+
+        result = []
+
+        for key in tmp.keys():
+            third = Third(tmp[key][0])
+            print(third)
+            result.append(third)
+
+        return result
