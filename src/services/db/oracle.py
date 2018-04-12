@@ -367,8 +367,9 @@ class Oracle(object):
         result = []
 
         for key in tmp.keys():
-            third = Third(tmp[key][0])
-            print(third)
+            third = Third(tmp[key][0], tmp[key][1])
             result.append(third)
+        
+        result.sort(key=lambda x: x.w, reverse=True)
 
         return result

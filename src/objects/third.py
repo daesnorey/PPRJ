@@ -2,7 +2,7 @@
 
 class Third(object):
 
-    def __init__(self, row):
+    def __init__(self, row, w):
         self.id = row[0]
         self.document_type = row[1]
         self.document_number = row[2]
@@ -12,3 +12,4 @@ class Third(object):
         self.born_date = row[6]
         self.marita_status = row[7]
         self.start_date = row[8]
+        self.w = w
