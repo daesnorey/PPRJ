@@ -3,6 +3,7 @@
 db_connection.py file will contain the connection behaviour
 to the database
 """
+import traceback
 import random
 import copy
 import cx_Oracle
@@ -224,12 +225,17 @@ class Oracle(object):
 
         __inst = ""
         __values = ""
+
         for field in fields:
+            __type = fields[field].get("type") if isinstance(fields[field], dict) else None
             if __inst:
                 __inst += ","
                 __values += ","
 
-            if action == 2:
+            if __type and action == 0:
+                __inst += field
+                __values += "TO_DATE(:" + field + ", 'yyyy-MM-dd')" if __type == "date" else ":" + field
+            elif action == 2:
                 __inst += field + "=:" + field
             else:
                 __inst += field
@@ -295,16 +301,22 @@ class Oracle(object):
                 self.execute(__update_query, generic_object, True)
             else:
                 newest_id_wrapper = self.get_cursor().var(cx_Oracle.NUMBER)
-                __insert_query = self.get_query(table, fields=__fields,
-                                                action=0)
+                __insert_query = self.get_query(table, fields=__fields, action=0)
+
+                for field in __fields: __fields[field] = __fields[field].get("value")
                 __fields["new_id"] = newest_id_wrapper
                 __insert_query = __insert_query.replace(":return_id", name_id)
-                self.execute(__insert_query, __fields, True)
+
+                print(__insert_query)
+                self.execute(__insert_query, __fields, True, False)
                 new_id = newest_id_wrapper.getvalue()
                 response["id"] = int(new_id)
         except Exception as e:
+            formatted_lines = traceback.format_exc().splitlines()
+            print(formatted_lines[0])
+            print(formatted_lines[-1])
             print(e)
-            response = dict(error=1, text="There was an error saving")
+            response = dict(error=1, text="There was an error saving", desc_error=formatted_lines[-1])
 
         return response
 

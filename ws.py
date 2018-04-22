@@ -24,12 +24,23 @@ def enable_cors():
     response.headers['Access-Control-Allow-Methods'] = 'PUT, GET, POST, DELETE, OPTIONS'
     response.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token'
 
-@app.route("/third-party")
-@app.route("/third-party/<ext>")
-def third_party(ext="third"):
-    result = ws_controller.get(ext, request.query)
+@app.route("/<method>/<ext>")
+def get(method="all",ext=None):
+    if ext: method += "_{}".format(ext)
+    result = ws_controller.get(method, request.query)
     return json.dumps(result, cls=DatetimeEncoder, default=DatetimeEncoder.jsonDefault)
 
+@app.route("/<method>/<ext>", method="POST")
+def save(method, ext=None):
+    if ext: method += "_{}".format(ext)
+    result = ws_controller.save(method, request.query, request.files, request.is_ajax, request.is_xhr)
+    return result
+
+@app.route("/<method>/<ext>", method="DELETE")
+def delete(method, ext=None):
+    if ext: method += "_{}".format(ext)
+    result = ws_controller.delete(method, request.query)
+    return result
 
 if __name__ == "__main__":
     from optparse import OptionParser

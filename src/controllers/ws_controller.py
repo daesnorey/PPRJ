@@ -17,15 +17,33 @@ class WsController(object):
         return self.__service
 
     def get(self, option, request):
-        if option == "third":
+        if option == "third-party":
             return self.__get_service().get_third_party(option, request)
-        elif option == "product":
-            self.__get_service().get_product(option)
+        elif option == "third-party_client":
+            return self.__get_service().get_client(request)
+        elif option == "third-party_employee":
+            return self.__get_service().get_employee(request)
+        elif option == "document_type":
+            return self.__get_service().get_document_type(request)
         else:
             raise Exception("wrong option")
     
-    def save(self):
-        pass
+    def save(self, option, request, files=None, is_ajax=False, is_xhr=False):
+        if option == "third-party":
+            return self.__get_service().save_third_party(request)
+        elif option == "third-party_client":
+            return self.__get_service().save_client(request)
+        elif option == "third-party_employee":
+            return self.__get_service().save_employee(request)
+        else:
+            raise Exception("wrong option")
     
     def delete(self):
-        pass
+        if option == "third-party":
+            return self.__get_service().delete_third_party(request)
+        elif option == "third-party_client":
+            return self.__get_service().delete_client(request)
+        elif option == "third-party_employee":
+            return self.__get_service().delete_employee(request)
+        else:
+            raise Exception("wrong option")
