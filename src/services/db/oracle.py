@@ -63,7 +63,7 @@ class Oracle(object):
 
         return self.__cursor
 
-    def execute(self, query, bindvars=None, commit=False, debug=True):
+    def execute(self, query, bindvars=None, commit=False, debug=False):
         """Execute query, return cursor."""
         __noramalizate = self.normalize_query(query, bindvars)
         __query = __noramalizate[0]
@@ -232,11 +232,11 @@ class Oracle(object):
                 __inst += ","
                 __values += ","
 
-            if __type and action == 0:
+            if action == 0:
                 __inst += field
-                __values += "TO_DATE(:" + field + ", 'yyyy-MM-dd')" if __type == "date" else ":" + field
+                __values += "TO_DATE(:{0}, 'yyyy-MM-dd')".format(field) if __type == "date" else ":{}".format(field)
             elif action == 2:
-                __inst += field + "=:" + field
+                __inst += "{0}= TO_DATE(:{0}, 'yyyy-MM-dd')".format(field) if __type == "date" else "{0}=:{0}".format(field)
             else:
                 __inst += field
                 __values += ":" + field
@@ -285,7 +285,10 @@ class Oracle(object):
         __fields = copy.copy(generic_object)
         if name_id in __fields:
             del __fields[name_id]
-            id_object = generic_object[name_id]
+            if isinstance(generic_object[name_id], dict):
+                id_object = generic_object[name_id]['value']
+            else:
+                id_object = generic_object[name_id]
         else:
             id_object = -1
 
@@ -297,6 +300,8 @@ class Oracle(object):
                 __condition = {name_id: id_object}
                 __update_query = self.get_query(table, __fields, __condition,
                                                 action=2)
+                
+                for field in generic_object: generic_object[field] = generic_object[field].get("value")
                 print(__update_query)
                 self.execute(__update_query, generic_object, True)
             else:

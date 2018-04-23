@@ -82,7 +82,7 @@ class WsService(object):
             if request.get(key):
                 __third.set_value(key, request.get(key))
 
-        response = self.__db.save("CLIENTE", __employee.attr_list(True), "ID_CLIENTE")
+        response = self.__db.save("TERCERO", __employee.attr_list(True), "ID_TERCERO")
         return response
 
     def save_client(self, request):
