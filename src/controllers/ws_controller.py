@@ -25,6 +25,10 @@ class WsController(object):
             return self.__get_service().get_employee(request)
         elif option == "document_type":
             return self.__get_service().get_document_type(request)
+        elif option == "purchase":
+            pass
+        elif option == "purchase_open":
+            return self.__get_service().get_purchase(request, dict(ESTADO=0))
         else:
             raise Exception("wrong option")
     

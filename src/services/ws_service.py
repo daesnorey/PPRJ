@@ -7,6 +7,7 @@ from src.objects.client import Client
 from src.objects.employee import Employee
 from src.objects.third import Third
 from src.objects.document_type import DocumentType
+from src.objects.purchase import Purchase
 
 class WsService(object):
 
@@ -58,6 +59,20 @@ class WsService(object):
                 break
             document_type = DocumentType(row)
             response.append(document_type)
+
+        return response
+    
+    def get_purchase(self, request, conditions={}):
+        __query = self.__db.get_query("COMPRA", conditions=conditions)
+        __response = self.__db.execute(__query, conditions)
+
+        response = []
+        while True:
+            row = __response.fetchone()
+            if not row:
+                break
+            purchase = Purchase(row)
+            response.append(purchase)
 
         return response
 
