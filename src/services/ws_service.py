@@ -75,6 +75,19 @@ class WsService(object):
             response.append(purchase)
 
         return response
+   
+    def get_domain(self, request):
+        __query = self.__db.get_query(request.get("table"))
+        __response = self.__db.execute(__query, {})
+
+        response = []
+        while True:
+            row = __response.fetchone()
+            if not row:
+                break
+            response.append(row)
+
+        return response
 
     def save_third_party(self, request):
         __third = Third()
@@ -102,4 +115,3 @@ class WsService(object):
 
         response = self.__db.save("EMPLEADO", __employee.attr_list(True), "ID_EMPLEADO")
         return response
-        

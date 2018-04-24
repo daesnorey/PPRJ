@@ -17,7 +17,9 @@ class WsController(object):
         return self.__service
 
     def get(self, option, request):
-        if option == "third-party":
+        if option == "domain":
+            return self.__get_service().get_domain(request)
+        elif option == "third-party":
             return self.__get_service().get_third_party(option, request)
         elif option == "third-party_client":
             return self.__get_service().get_client(request)
