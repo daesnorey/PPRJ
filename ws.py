@@ -32,10 +32,15 @@ def get(method="all",ext=None):
     return json.dumps(result, cls=DatetimeEncoder, default=DatetimeEncoder.jsonDefault)
 
 @app.route("/<method>", method="POST")
+@app.route("/<method>", method="OPTIONS")
 @app.route("/<method>/<ext>", method="POST")
+@app.route("/<method>/<ext>", method="OPTIONS")
 def save(method, ext=None):
+    if not request.json:
+        return
+
     if ext: method += "_{}".format(ext)
-    result = ws_controller.save(method, request.query, request.files, request.is_ajax, request.is_xhr)
+    result = ws_controller.save(method, request.json, request.files, request.is_ajax, request.is_xhr)
     return result
 
 @app.route("/<method>", method="DELETE")

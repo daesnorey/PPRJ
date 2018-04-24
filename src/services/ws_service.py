@@ -1,6 +1,7 @@
 """
 ws_service.py
 """
+import base64
 
 from src.services.db.oracle import Oracle
 from src.objects.client import Client
@@ -8,6 +9,7 @@ from src.objects.employee import Employee
 from src.objects.third import Third
 from src.objects.document_type import DocumentType
 from src.objects.purchase import Purchase
+from src.objects.purchase_detail import PurchaseDetail
 
 class WsService(object):
 
@@ -75,6 +77,20 @@ class WsService(object):
             response.append(purchase)
 
         return response
+
+    def get_purchase_detail(self, request, conditions={}):
+        __query = self.__db.get_query("DETALLE_COMPRA", conditions=conditions)
+        __response = self.__db.execute(__query, conditions)
+
+        response = []
+        while True:
+            row = __response.fetchone()
+            if not row:
+                break
+            detail = PurchaseDetail(row)
+            response.append(detail)
+
+        return response
    
     def get_domain(self, request):
         __query = self.__db.get_query(request.get("table"))
@@ -114,4 +130,29 @@ class WsService(object):
                 __employee.set_value(key, request.get(key))
 
         response = self.__db.save("EMPLEADO", __employee.attr_list(True), "ID_EMPLEADO")
+        return response
+
+    def save_purchase(self, request, option=0):
+        if option == 0:
+            __table = "COMPRA"
+            __object = Purchase()
+        elif option == 1:
+            __table = "DETALLE_COMPRA"
+            __object = PurchaseDetail()
+
+        for key in __object:            
+            if request.get(key):
+                __val = request.get(key)
+                try:
+                    __val = base64.b64decode(__val)
+                    if __object.get_type(key) == "int":
+                        __val = int(__val)
+                    elif __object.get_type(key) == "float":
+                        __val = float(__val)
+                except Exception as e:
+                    print(e, __val)
+
+                __object.set_value(key, __val)
+
+        response = self.__db.save(__table, __object.attr_list(True), __object.get_key("id"))
         return response

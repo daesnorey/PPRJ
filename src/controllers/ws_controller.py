@@ -31,6 +31,8 @@ class WsController(object):
             pass
         elif option == "purchase_open":
             return self.__get_service().get_purchase(request, dict(ESTADO=0))
+        elif option == "purchase_detail":
+            return self.__get_service().get_purchase_detail(request, dict(ID_COMPRA=request.get("purchase_id")))
         else:
             raise Exception("wrong option")
     
@@ -41,6 +43,8 @@ class WsController(object):
             return self.__get_service().save_client(request)
         elif option == "third-party_employee":
             return self.__get_service().save_employee(request)
+        elif option == "purchase_detail":
+            return self.__get_service().save_purchase(request, 1)
         else:
             raise Exception("wrong option")
     
