@@ -37,6 +37,8 @@ def get(method="all",ext=None):
 @app.route("/<method>/<ext>", method="OPTIONS")
 def save(method, ext=None):
     if not request.json:
+        print(response.status)
+        response.status = 200
         return
 
     if ext: method += "_{}".format(ext)

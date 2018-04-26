@@ -43,6 +43,8 @@ class WsController(object):
             return self.__get_service().save_client(request)
         elif option == "third-party_employee":
             return self.__get_service().save_employee(request)
+        elif option == "purchase":
+            return self.__get_service().save_purchase(request)
         elif option == "purchase_detail":
             return self.__get_service().save_purchase(request, 1)
         else:

@@ -2,6 +2,7 @@
 ws_service.py
 """
 import base64
+import re
 
 from src.services.db.oracle import Oracle
 from src.objects.client import Client
@@ -29,8 +30,13 @@ class WsService(object):
                 pass
             else:
                 raise Exception("Data corrupted")
-        else:
-            p = request.get("p")
+        
+        if request.get("third_id"):
+            __conditions = dict(ID_TERCERO=request.get("third_id"))
+            __query = self.__db.get_query("TERCERO", conditions=__conditions)
+            __response = self.__db.execute(__query, __conditions).fetchone()
+            return Third(__response)
+
 
     def get_client(self, request):
         third_id = request.get("third_id")
@@ -149,8 +155,11 @@ class WsService(object):
                         __val = int(__val)
                     elif __object.get_type(key) == "float":
                         __val = float(__val)
-                except Exception as e:
-                    print(e, __val)
+                except Exception:
+                    if __object.get_type(key) == "date":
+                        m = re.search('([0-9]{4}\-[0-9]{2}\-[0-9]{2})', __val)
+                        if m:
+                            __val = m.group(0)
 
                 __object.set_value(key, __val)
 
