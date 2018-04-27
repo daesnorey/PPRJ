@@ -1,7 +1,7 @@
 from src.objects.object_extend import ObjectExt
 
-KEYS = {"id":"ID_EMPLEADO","third_id":"ID_TERCERO","factor":"FACTOR","phone":"TELEFONO","start_date":"FECHA_INGRESO","end_date":"FECHA_RETIRO"}
-TYPES = {"id": "number","third_id":"number","factor":"float","phone":"number","start_date":"date","end_date":"date"}
+KEYS = {"id":"ID_TERCERO","document_type":"ID_TIPO_DOCUMENTO","document_number":"NUMERO_DOCUMENTO","names":"NOMBRES","surnames":"APELLIDOS","born_date":"FECHA_NACIMIENTO","marital_status":"ID_ESTADO_CIVIL","start_date":"FECHA_ALTA"}
+TYPES = {"id":"int","document_type":"char","document_number":"string","names":"string","surnames":"string","born_date":"date","marital_status":"char","start_date":"date"}
 
 class Third(ObjectExt):
 
@@ -12,8 +12,7 @@ class Third(ObjectExt):
         self.document_number = row[2] if row else None
         self.names = row[3] if row else None
         self.surnames = row[4] if row else None
-        self.third_type = row[5] if row else None
-        self.born_date = row[6] if row else None
-        self.marita_status = row[7] if row else None
-        self.start_date = row[8] if row else None
+        self.born_date = row[5] if row else None
+        self.marital_status = row[6] if row else None
+        self.start_date = row[7] if row else None
         self.w = w

@@ -113,11 +113,11 @@ class WsService(object):
 
     def save_third_party(self, request):
         __third = Third()
-        for key in Third.__dict__.keys():
+        for key in __third:
             if request.get(key):
                 __third.set_value(key, request.get(key))
 
-        response = self.__db.save("TERCERO", __employee.attr_list(True), "ID_TERCERO")
+        response = self.__db.save("TERCERO", __third.attr_list(True), "ID_TERCERO")
         return response
 
     def save_client(self, request):
@@ -126,7 +126,7 @@ class WsService(object):
             if request.get(key):
                 __client.set_value(key, request.get(key))
 
-        response = self.__db.save("CLIENTE", __employee.attr_list(True), "ID_CLIENTE")
+        response = self.__db.save("CLIENTE", __client.attr_list(True), "ID_CLIENTE")
         return response
 
     def save_employee(self, request):

@@ -1,7 +1,7 @@
 from src.objects.object_extend import ObjectExt
 
-KEYS = {"id":"ID_CLIENTE","third_id":"ID_TERCERO","factor":"FACTOR","phone":"TELEFONO_CONTACTO","address":"DIRECCION_FACTURACION"}
-TYPES = {"id": "number","third_id":"number","factor":"float","phone":"number","address":"varchar"}
+KEYS = {"id":"ID_CLIENTE","third_id":"ID_TERCERO","factor":"FACTOR_CLIENTE","phone":"TELEFONO_CONTACTO","address":"DIRECCION_FACTURACION","start_date":"FECHA_ALTA"}
+TYPES = {"id": "int","third_id":"number","factor":"float","phone":"number","address":"string","start_date":"date"}
 
 class Client(ObjectExt):
 

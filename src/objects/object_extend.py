@@ -25,6 +25,9 @@ class ObjectExt(object):
     def set_value(self, attr, value):
         __type = self.get_type(attr)
 
+        if not __type:
+            return
+
         if __type == "number":
             value = int(value)
         elif __type == "float":
@@ -50,10 +53,11 @@ class ObjectExt(object):
     def attr_list(self, with_type=False):
         items = dict()
         for key, value in self.__dict__.items():
-            if not value or str(key).startswith("_"):
+            __type = self.get_type(key)
+            if not value or str(key).startswith("_") or not __type:
                 continue
-            items[self.get_key(key)] = value if not with_type else dict(value=value, type=self.get_type(key))
-        print(items)
+            items[self.get_key(key)] = value if not with_type else dict(value=value, type=__type)
+
         return items
 
     def get_key(self, key):
