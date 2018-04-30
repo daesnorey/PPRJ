@@ -33,6 +33,12 @@ class WsController(object):
             return self.__get_service().get_purchase(request, dict(ESTADO=0))
         elif option == "purchase_detail":
             return self.__get_service().get_purchase_detail(request, dict(ID_COMPRA=request.get("purchase_id")))
+        elif option == "production_chart":
+            return self.__get_service().get_production_chart(request)
+        elif option == "production":
+            return self.__get_service().get_production(request)
+        elif option == "production_detail":
+            return self.__get_service().get_production_detail(request)
         else:
             raise Exception("wrong option")
     
@@ -47,6 +53,10 @@ class WsController(object):
             return self.__get_service().save_purchase(request)
         elif option == "purchase_detail":
             return self.__get_service().save_purchase(request, 1)
+        elif option == "production":
+            return self.__get_service().save_production(request)
+        elif option == "production_detail":
+            return self.__get_service().save_production_detail(request)
         else:
             raise Exception("wrong option")
     

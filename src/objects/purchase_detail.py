@@ -5,6 +5,8 @@ TYPES = {"id":"int","purchase_id":"int","product_id":"int","presentation_id":"in
 
 class PurchaseDetail(ObjectExt):
 
+    TABLE = 'DETALLE_COMPRA'
+
     def __init__(self, row=None):
         super(PurchaseDetail, self).__init__(KEYS, TYPES)
         self.id = row[0] if row and row[0] else None

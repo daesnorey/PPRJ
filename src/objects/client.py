@@ -5,6 +5,8 @@ TYPES = {"id": "int","third_id":"number","factor":"float","phone":"number","addr
 
 class Client(ObjectExt):
 
+    TABLE = 'CLIENTE'
+
     def __init__(self,  row=None):
         super(Client, self).__init__(KEYS, TYPES)
         self.id = row[0] if row else None

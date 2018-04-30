@@ -158,7 +158,7 @@ class Oracle(object):
                     __ini += " RIGHT JOIN "
                 else:
                     __ini += " INNER JOIN "
-                __init += str_table
+                __ini += str_table
                 print("to_join", to_join)
                 for field in to_join:
                     print("field", field)
@@ -363,15 +363,16 @@ class Oracle(object):
             query = self.get_instruction(1, {}).replace(":table", table)
             fields = options.get("fields")
             conditions = options.get("conditions")
+            class_object = options.get("class_object")
             
             for field in fields:
-                nquery = query + " WHERE "
+                nquery = "{} WHERE".format(query)
 
                 for condition in conditions:
                     if len(condition.strip()) == 0:
                         continue
                     nquery += " LOWER({}) LIKE LOWER('%{}%') OR".format(field, condition)
-                nquery = nquery.strip("OR").strip()
+                nquery = nquery.strip("OR").strip()              
                 response = self.execute(nquery, {}, debug=False)
 
                 for row in response.fetchall():
@@ -381,12 +382,15 @@ class Oracle(object):
                     else:
                         tmp[id][1] += 1
 
-        result = []
+        if class_object:
+            result = []
 
-        for key in tmp.keys():
-            third = Third(tmp[key][0], tmp[key][1])
-            result.append(third)
-        
-        result.sort(key=lambda x: x.w, reverse=True)
+            for key in tmp.keys():
+                item = class_object(tmp[key][0], tmp[key][1])
+                result.append(item)
+
+            result.sort(key=lambda x: x.w, reverse=True)
+        else:
+            result = tmp        
 
         return result

@@ -16,6 +16,12 @@ class DatetimeEncoder(json.JSONEncoder):
     @classmethod
     def jsonDefault(self, object):
         try:
-            return object.__dict__
+            attr = getattr(object, "attr_list", None)
+            __response = dict()
+            if attr:
+                __response = attr(field_name=False)
+            else:
+                __response = object.__dict__
+            return __response
         except Exception:
             return self.default(self, object)

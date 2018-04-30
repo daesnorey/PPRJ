@@ -6,6 +6,8 @@ TYPES = {"id":"int","third_party_id":"int","date":"date","sub_cost":"float","tot
 
 class Purchase(ObjectExt):
 
+    TABLE = 'COMPRA'
+
     def __init__(self, row=None):
         super(Purchase, self).__init__(KEYS, TYPES)
         self.id = row[0] if row and row[0] else None
