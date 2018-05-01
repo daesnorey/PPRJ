@@ -243,10 +243,7 @@ class WsService(object):
         return response
 
     def save_third_party(self, request):
-        __third = Third()
-        for key in __third:
-            if request.get(key):
-                __third.set_value(key, request.get(key))
+        __third = self.set_data(request, Third())
 
         response = self.__db.save("TERCERO", __third.attr_list(True), "ID_TERCERO")
         return response
