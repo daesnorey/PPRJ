@@ -7,10 +7,14 @@ class DbTypes(object):
 
     NULL = 'DBT_NULL'
     NOT_NULL = 'DBT_NOT_NULL'
+    DATE_MONTH = 'DBT_DATE_MONTH'
+    DATE_YEAR = 'DBT_DATE_YEAR'
 
     def __init__(self):
         self.__sentences = {DbTypes.NULL: 'IS NULL',
-                            DbTypes.NOT_NULL: 'IS NOT NULL'}
+                            DbTypes.NOT_NULL: 'IS NOT NULL',
+                            DbTypes.DATE_MONTH: 'EXTRACT(MONTH FROM {}) = EXTRACT(MONTH FROM SYSDATE)',
+                            DbTypes.DATE_YEAR: 'EXTRACT(YEAR FROM {}) = EXTRACT(YEAR FROM SYSDATE)'}
 
     def get_sentences(self, input_type=None):
         """Method get_sentences."""
