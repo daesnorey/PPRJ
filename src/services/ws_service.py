@@ -244,26 +244,17 @@ class WsService(object):
 
     def save_third_party(self, request):
         __third = self.set_data(request, Third())
-
-        response = self.__db.save("TERCERO", __third.attr_list(True), "ID_TERCERO")
+        response = self.__db.save(__third.TABLE, __third.attr_list(True), __third.get_key("id"))
         return response
 
     def save_client(self, request):
-        __client = Client()
-        for key in __client:
-            if request.get(key):
-                __client.set_value(key, request.get(key))
-
-        response = self.__db.save("CLIENTE", __client.attr_list(True), "ID_CLIENTE")
+        __client = self.set_data(request, Client())
+        response = self.__db.save(__client.TABLE, __client.attr_list(True), __client.get_key("id"))
         return response
 
     def save_employee(self, request):
-        __employee = Employee()
-        for key in __employee:
-            if request.get(key):
-                __employee.set_value(key, request.get(key))
-
-        response = self.__db.save("EMPLEADO", __employee.attr_list(True), "ID_EMPLEADO")
+        __employee = self.set_data(request, Employee())
+        response = self.__db.save(__employee.TABLE, __employee.attr_list(True), __employee.get_key("id"))
         return response
 
     def save_purchase(self, request, option=0):
