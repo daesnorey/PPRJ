@@ -264,13 +264,22 @@ class Oracle(object):
         __cond = ""
 
         for condition in conditions:
-            if __cond:
-                __cond += " AND "
+            __value = conditions[condition]
+            if not isinstance(__value, list):
+                __value = [__value]
+            
+            for __val in __value:
+                if __cond:
+                    __cond += " AND "
 
-            if DbTypes.exist(conditions[condition]):
-                __cond += condition + " " + DbTypes.get_sentence(conditions[condition])
-            else:
-                __cond += condition + "=:" + condition
+                if DbTypes.exist(__val):
+                    __sentence = DbTypes.get_sentence(__val)
+                    if '{}' in __sentence:
+                        __cond += __sentence.format(condition)
+                    else:
+                        __cond += condition + " " + __sentence
+                else:
+                    __cond += condition + "=:" + condition
 
         __condition += __cond
         return __condition

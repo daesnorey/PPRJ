@@ -207,9 +207,13 @@ class WsService(object):
     def get_production(self, request):
         __production = self.set_data(request, Production())
         __conditions = __production.attr_list()
-        
+        __bindvars = __conditions.copy() 
+
+        if not __production.id and not __production.date:
+            __key = __production.get_key("date")
+            __conditions[__key] = [DbTypes.DATE_MONTH, DbTypes.DATE_YEAR]
         __query = self.__db.get_query(__production.TABLE, conditions=__conditions)
-        __response = self.__db.execute(__query, __conditions)
+        __response = self.__db.execute(__query, __bindvars)
 
         response = []
         while True:
