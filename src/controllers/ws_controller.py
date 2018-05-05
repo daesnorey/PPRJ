@@ -39,6 +39,8 @@ class WsController(object):
             return self.__get_service().get_production(request)
         elif option == "production_detail":
             return self.__get_service().get_production_detail(request)
+        elif option == "inventory":
+            return self.__get_service().get_inventory(request)
         else:
             raise Exception("wrong option")
     

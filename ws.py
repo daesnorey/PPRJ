@@ -5,10 +5,15 @@ controllers
 """
 
 import json
+import logging
+from waitress import serve
 
 from bottle import Bottle, route, run, view, request, response, static_file
 from src.controllers.ws_controller import WsController
 from src.utils.datetime_encoder import DatetimeEncoder
+
+logger = logging.getLogger('waitress')
+logger.setLevel(logging.INFO)
 
 app = Bottle()
 
@@ -53,6 +58,8 @@ def delete(method, ext=None):
     return result
 
 if __name__ == "__main__":
+    #from paste import httpserver
+    #httpserver.serve(app, host='0.0.0.0', port=2900)
     from optparse import OptionParser
     parser = OptionParser()
     parser.add_option("--host", dest="host", default="localhost",
@@ -60,5 +67,7 @@ if __name__ == "__main__":
     parser.add_option("--port", dest="port", default=2900,
                       help="port number", metavar="port")
     (options, args) = parser.parse_args()
-    run(app, host=options.host, port=int(options.port))
-    #run(host='localhost', port=2900, debug=True, reloader=True)
+    run(app, host=options.host, port=int(options.port), workers=4)
+    #run(host='localhost', port=2900, debug=True, server='paste', threaded=True)
+    #serve(app, listen='0.0.0.0:2900')
+    #run(host='0.0.0.0', port=2900, server='waitress', workers=4)

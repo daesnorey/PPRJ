@@ -37,7 +37,8 @@ class WsService(object):
                             __val = float(__val)
                     except Exception:
                         if __object.get_type(key) == "date":
-                            m = re.search('([0-9]{4}\-[0-9]{2}\-[0-9]{2})', __val)
+                            print(__val)
+                            m = re.search('([0-9]{4}\-[0-9]{1,2}\-[0-9]{1,2})', __val)
                             if m:
                                 __val = m.group(0)
                             else:
@@ -241,6 +242,64 @@ class WsService(object):
             response.append(item)
 
         return response
+    
+    def get_inventory(self, request):
+        __inventory = self.set_data(request, Inventory(set_default=False))
+        __conditions = __inventory.attr_list()
+
+        __order_by = None
+
+        if len(__conditions) == 0:
+            __fields = [__inventory.get_key("presentation_id"), 
+                        __inventory.get_key("product_id"),
+                        'SUM({0}) {0}'.format( __inventory.get_key("quantity"))]
+            __order_by = "{} ASC".format(__inventory.get_key("quantity"))
+        else:
+            __fields = [__inventory.get_key("batch"),
+                        __inventory.get_key("presentation_id"), 
+                        __inventory.get_key("product_id"), 
+                        __inventory.get_key("start_date"), 
+                        __inventory.get_key("expiration_date"),
+                        'SUM({0}) {0}'.format( __inventory.get_key("quantity"))]
+            __order_by = "{} ASC".format(__inventory.get_key("expiration_date"))
+
+        __date = None
+        if __inventory.get_key("expiration_date") in __conditions.keys():
+            __date = __conditions.pop(__inventory.get_key("expiration_date"))
+
+        __group_by = ', '.join([str(x) for x in __fields[:-1]])
+
+        __query = self.__db.get_query(__inventory.VIEW, __fields, __conditions)
+        
+        if __date:
+            __condition = "{} BETWEEN SYSDATE AND TO_DATE('{}', 'yyyy-MM-dd')".format(__inventory.get_key("expiration_date"), __date)
+            if " WHERE " in __query:
+                __query = "{} AND {}".format(__query, __condition)
+            else:
+                __query = "{} WHERE {}".format(__query, __condition)
+        
+        __query = "{} GROUP BY {}".format(__query, __group_by)
+
+        print(__query)
+
+        if __order_by:
+            __query += " ORDER BY {}".format(__order_by)
+
+        __response = self.__db.execute(__query, __conditions)
+
+        __fields[-1] = __inventory.get_key("quantity")
+
+        response = []
+        while True:
+            row = __response.fetchone()
+            if not row:
+                break
+            item = Inventory()
+            for i in range(len(row)):
+                item.set_value(__fields[i], row[i], True)
+            response.append(item)
+
+        return response
 
     def save_third_party(self, request):
         __third = self.set_data(request, Third())
@@ -269,6 +328,7 @@ class WsService(object):
     
     def save_production(self, request):
         __production = self.set_data(request, Production())
+        print(__production.attr_list())
         response = self.__db.save(__production.TABLE, __production.attr_list(True), __production.get_key("id"))
         return response
 
@@ -286,6 +346,7 @@ class WsService(object):
             
             __amount -= 1
             __inventory = self.set_data(request, Inventory())
+            print(__inventory.attr_list())
             __id_field = __inventory.get_key("id")
             __response = self.__db.save(__inventory.TABLE, __inventory.attr_list(True), "ID_INVENTARIO")
             __id = __response.get("id")
@@ -293,6 +354,7 @@ class WsService(object):
             if __id:
                 __production_detail = self.set_data(request, ProductionDetail())
                 __production_detail.inventory_id = __id
+                print(__production_detail.attr_list())
                 __response = self.__db.save(__production_detail.TABLE, __production_detail.attr_list(True), __production_detail.get_key("id"))
                 if not __response.get("id"):
                     response = __response

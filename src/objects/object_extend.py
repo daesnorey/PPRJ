@@ -22,7 +22,13 @@ class ObjectExt(object):
         value = getattr(self, "get_" + item)
         return value()
 
-    def set_value(self, attr, value):
+    def set_value(self, attr, value, find_key=False):
+        if find_key:
+            for __key, __value in self.__KEYS.items():
+                if __value == attr:
+                    attr = __key
+                    break
+
         __type = self.get_type(attr)
 
         if not __type:

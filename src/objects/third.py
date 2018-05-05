@@ -5,6 +5,8 @@ C_TYPES = {"id":"int","document_type":"char","document_number":"string","names":
 
 class Third(ObjectExt):
 
+    TABLE = 'TERCERO'
+
     def __init__(self, row=None, w=-1, KEYS=None, TYPES=None):
         if KEYS:
             for key in KEYS: C_KEYS[key] = KEYS[key]

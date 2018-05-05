@@ -227,7 +227,10 @@ class Oracle(object):
         __values = ""
 
         for field in fields:
-            __type = fields[field].get("type") if isinstance(fields[field], dict) else None
+            try:
+                __type = fields[field].get("type")# if isinstance(fields[field], dict) else None
+            except:
+                __type = None
             if __inst:
                 __inst += ","
                 __values += ","
@@ -383,6 +386,9 @@ class Oracle(object):
                     nquery += " LOWER({}) LIKE LOWER('%{}%') OR".format(field, condition)
                 nquery = nquery.strip("OR").strip()              
                 response = self.execute(nquery, {}, debug=False)
+
+                if not response:
+                    continue
 
                 for row in response.fetchall():
                     id = row[0]

@@ -14,14 +14,14 @@ class DatetimeEncoder(json.JSONEncoder):
             return str(obj)
 
     @classmethod
-    def jsonDefault(self, object):
+    def jsonDefault(self, __object):
         try:
-            attr = getattr(object, "attr_list", None)
+            attr = getattr(__object, "attr_list", None)
             __response = dict()
             if attr:
                 __response = attr(field_name=False)
             else:
-                __response = object.__dict__
+                __response = __object.__dict__
             return __response
         except Exception:
-            return self.default(self, object)
+            return self.default(self, __object)
