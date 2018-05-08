@@ -6,7 +6,6 @@ controllers
 
 import json
 import logging
-from waitress import serve
 
 from bottle import Bottle, route, run, view, request, response, static_file
 from src.controllers.ws_controller import WsController
