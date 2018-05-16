@@ -63,7 +63,7 @@ class Oracle(object):
 
         return self.__cursor
 
-    def execute(self, query, bindvars=None, commit=False, debug=False):
+    def execute(self, query, bindvars={}, commit=False, debug=False):
         """Execute query, return cursor."""
         __noramalizate = self.normalize_query(query, bindvars)
         __query = __noramalizate[0]
@@ -267,7 +267,12 @@ class Oracle(object):
         __cond = ""
 
         for condition in conditions:
-            __value = conditions[condition]
+            try:
+                __type = conditions[condition].get("type")
+            except:
+                __type = None
+
+            __value = conditions[condition] if not __type else conditions[condition].get("value")
             if not isinstance(__value, list):
                 __value = [__value]
             
@@ -282,7 +287,7 @@ class Oracle(object):
                     else:
                         __cond += condition + " " + __sentence
                 else:
-                    __cond += condition + "=:" + condition
+                    __cond += "{0} = TO_DATE(:{0}, 'yyyy-MM-dd')".format(condition) if __type == "date" else "{0}=:{0}".format(condition)
 
         __condition += __cond
         return __condition

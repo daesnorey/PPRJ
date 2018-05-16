@@ -67,7 +67,7 @@ if __name__ == "__main__":
     parser.add_option("--port", dest="port", default=2900,
                       help="port number", metavar="port")
     (options, args) = parser.parse_args()
-    run(app, host=options.host, port=int(options.port), workers=4)
+    run(app, host=options.host, port=int(options.port), workers=8)
     #run(host='localhost', port=2900, debug=True, server='paste', threaded=True)
     #serve(app, listen='0.0.0.0:2900')
     #run(host='0.0.0.0', port=2900, server='waitress', workers=4)

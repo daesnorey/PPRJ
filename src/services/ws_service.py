@@ -14,6 +14,7 @@ from src.objects.purchase_detail import PurchaseDetail
 from src.objects.production import Production
 from src.objects.inventory import Inventory
 from src.objects.production_detail import ProductionDetail, ProductionDetailExt
+from src.objects.production_process import ProductionProcess
 
 from src.services.db.db_types import DbTypes
 
@@ -28,13 +29,15 @@ class WsService(object):
                 __val = request.get(key)
                 if __val == "undefined":
                     continue
-                if __object.get_type(key) in ("int", "float", "date"):
+                if __object.get_type(key) in ("int", "float", "date", "char"):
                     try:
                         __val = base64.b64decode(__val)
                         if __object.get_type(key) == "int":
                             __val = int(__val)
                         elif __object.get_type(key) == "float":
                             __val = float(__val)
+                        else:
+                            __val = __val.decode('ascii')
                     except Exception:
                         if __object.get_type(key) == "date":
                             print(__val)
@@ -101,7 +104,7 @@ class WsService(object):
         else:
             params = request.pop("q", "").split(" ")
             __fields = ["ID_EMPLEADO", "NUMERO_DOCUMENTO", "NOMBRES", "APELLIDOS"]
-            result = self.__db.search(table="V_EMPLEADO", fields=__fields, conditions=params)
+            result = self.__db.search(table=__employee.VIEW, fields=__fields, conditions=params)
             response = []
             for _, value in result.items():
                 __w = value[1]
@@ -122,6 +125,34 @@ class WsService(object):
                 response.append(__employee)
             response.sort(key=lambda x: x.w, reverse=True)
             return response
+
+    def get_employee_view(self, request):
+        __employee = self.set_data(request, Employee(set_date=False))
+        __conditions = __employee.attr_list()
+
+        __query = self.__db.get_query(table=__employee.VIEW, conditions=__conditions)
+        print(__query)
+        __response = self.__db.execute(__query, __conditions)
+
+        response = []
+
+        for row in __response.fetchall():
+            __emp = Employee(set_date=False)
+            __emp.id = row[0]
+            __emp.third_id = row[1]
+            __emp.document_number = row[2]
+            __emp.document_type = row[3]
+            __emp.marital_status = row[4]
+            __emp.names = row[5]
+            __emp.surnames = row[6]
+            __emp.born_date = row[7]
+            __emp.phone = row[8]
+            __emp.start_date = row[9]
+            __emp.factor = row[10]
+            response.append(__emp)
+
+        return response
+        
 
     def get_document_type(self, request):
         __query = self.__db.get_query("TIPO_DOCUMENTO")
@@ -207,13 +238,15 @@ class WsService(object):
 
     def get_production(self, request):
         __production = self.set_data(request, Production())
-        __conditions = __production.attr_list()
-        __bindvars = __conditions.copy() 
+        __conditions = __production.attr_list(True)
+        __bindvars = __production.attr_list() 
 
         if not __production.id and not __production.date:
             __key = __production.get_key("date")
             __conditions[__key] = [DbTypes.DATE_MONTH, DbTypes.DATE_YEAR]
+
         __query = self.__db.get_query(__production.TABLE, conditions=__conditions)
+        print(__query)
         __response = self.__db.execute(__query, __bindvars)
 
         response = []
@@ -226,10 +259,27 @@ class WsService(object):
 
         return response
 
+    def get_production_process(self, request):
+        __production_process = self.set_data(request, ProductionProcess())
+        __conditions = __production_process.attr_list(True)
+        __bindvars = __production_process.attr_list()
+
+        __query = self.__db.get_query(__production_process.TABLE, conditions=__conditions)
+        __response = self.__db.execute(__query, __bindvars)
+
+        response = []
+        while True:
+            row = __response.fetchone()
+            if not row:
+                break
+            item = ProductionProcess(row)
+            response.append(item)
+
+        return response
+
     def get_production_detail(self, request):
         __production_detail = self.set_data(request, ProductionDetail())
         __conditions = __production_detail.attr_list()
-        
         __query = self.__db.get_query(__production_detail.VIEW, conditions=__conditions)
         __response = self.__db.execute(__query, __conditions)
 
@@ -242,7 +292,25 @@ class WsService(object):
             response.append(item)
 
         return response
-    
+
+    def get_process_presentation(self, request):
+        __process_presentation = self.set_data(request, ProductionProcess())
+        __conditions = __process_presentation.attr_list()
+
+        __query = self.__db.get_query("PRESENTACION_PROCESO", conditions=__conditions)
+        print(__query, __conditions)
+        __response = self.__db.execute(__query, __conditions)
+
+        response = []
+        while True:
+            row = __response.fetchone()
+            if not row:
+                break
+            item = dict(process_id=row[0], presentation_id=row[1])
+            response.append(item)
+
+        return response
+
     def get_inventory(self, request):
         __inventory = self.set_data(request, Inventory(set_default=False))
         __conditions = __inventory.attr_list()
@@ -301,6 +369,28 @@ class WsService(object):
 
         return response
 
+    def get_batch_code(self, request):
+        product_id = request.get("product_id")
+        date = request.get("start_date")
+
+        return 'TMP_BATCH'
+
+    def get_expiration_date(self, request):
+        date = request.get("start_date")
+        
+        __query = "SELECT TO_CHAR(TO_DATE('{}', 'yyyy-MM-dd') + INTERVAL '90' DAY, 'yyyy-MM-dd') expiration_date FROM DUAL".format(date)
+        response = self.__db.execute(__query)
+
+        if response:
+            row = response.fetchone()
+            return row[0]
+        else:
+            return date
+            
+
+
+
+
     def save_third_party(self, request):
         __third = self.set_data(request, Third())
         response = self.__db.save(__third.TABLE, __third.attr_list(True), __third.get_key("id"))
@@ -328,8 +418,13 @@ class WsService(object):
     
     def save_production(self, request):
         __production = self.set_data(request, Production())
-        print(__production.attr_list())
         response = self.__db.save(__production.TABLE, __production.attr_list(True), __production.get_key("id"))
+        return response
+
+    def save_production_process(self, request):
+        __production_process = self.set_data(request, ProductionProcess())
+        print(__production_process.attr_list(), request)
+        response = self.__db.save(__production_process.TABLE, __production_process.attr_list(True), __production_process.get_key("id"))
         return response
 
     def save_production_detail(self, request):
@@ -337,6 +432,11 @@ class WsService(object):
 
         if not __amount:
             return
+
+        __batch = self.get_batch_code(request)
+        __expiration_date = self.get_expiration_date(request)
+
+        print(__batch, __expiration_date)
         
         response = dict(error=0)
         __amount = int(__amount)
@@ -346,6 +446,9 @@ class WsService(object):
             
             __amount -= 1
             __inventory = self.set_data(request, Inventory())
+            __inventory.batch = __batch
+            __inventory.expiration_date = __expiration_date
+            
             print(__inventory.attr_list())
             __id_field = __inventory.get_key("id")
             __response = self.__db.save(__inventory.TABLE, __inventory.attr_list(True), "ID_INVENTARIO")

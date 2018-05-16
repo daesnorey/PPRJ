@@ -25,6 +25,8 @@ class WsController(object):
             return self.__get_service().get_client(request)
         elif option == "third-party_employee":
             return self.__get_service().get_employee(request)
+        elif option == "employee":
+            return self.__get_service().get_employee_view(request)
         elif option == "document_type":
             return self.__get_service().get_document_type(request)
         elif option == "purchase":
@@ -37,12 +39,16 @@ class WsController(object):
             return self.__get_service().get_production_chart(request)
         elif option == "production":
             return self.__get_service().get_production(request)
+        elif option == "production_process":
+            return self.__get_service().get_production_process(request)
         elif option == "production_detail":
             return self.__get_service().get_production_detail(request)
+        elif option == "process_presentation":
+            return self.__get_service().get_process_presentation(request)
         elif option == "inventory":
             return self.__get_service().get_inventory(request)
         else:
-            raise Exception("wrong option")
+            raise Exception("wrong option {}".format(option))
     
     def save(self, option, request, files=None, is_ajax=False, is_xhr=False):
         if option == "third-party":
@@ -57,6 +63,8 @@ class WsController(object):
             return self.__get_service().save_purchase(request, 1)
         elif option == "production":
             return self.__get_service().save_production(request)
+        elif option == "production_process":
+            return self.__get_service().save_production_process(request)
         elif option == "production_detail":
             return self.__get_service().save_production_detail(request)
         else:

@@ -8,6 +8,7 @@ TYPES = {"id": "number","third_id":"number","factor":"float","phone":"number","s
 class Employee(Third):
 
     TABLE = 'EMPLEADO'
+    VIEW = 'V_EMPLEADO'
 
     def __init__(self, row=None, w=-1, set_date=True, third=None):
         super(Employee, self).__init__(KEYS=KEYS, TYPES=TYPES)
